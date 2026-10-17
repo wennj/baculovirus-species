@@ -1,0 +1,407 @@
+---
+title: "MAFFT nucleotide alignments of baculovirus reference genes"
+---
+
+::: {.callout-note}
+This report was generated using AI under general human direction. At the time of generation, the contents have not been comprehensively reviewed by a human analyst.
+
+<!--
+To indicate human review: Delete the line above about contents not being reviewed, and replace this comment with:
+The contents have been reviewed and validated by [Your Name], [Your Role] on [Date].
+-->
+:::
+
+# Introduction
+
+This analysis creates independent MAFFT nucleotide alignments for the 38 baculovirus core genes and for the three-gene marker dataset consisting of polh/gran, lef-8, and lef-9. The individual alignments retain every sequence in their respective reference FASTA files. Genome-group eligibility and the selection of one sequence per genome group and gene are applied only when the alignments are concatenated.
+
+The accession-to-genome-group assignments are read from the outputs of `01_accession_matching.qmd`. That matching procedure is not repeated here. No distances, phylogenetic trees, or additional sequence searches are performed.
+
+# Input datasets
+
+The core-gene nucleotide FASTA files are read from `data/reference_core_genes/nt/`. The separate polh/gran marker is read from `data/reference_marker_genes/18_1_polhgran_alpha_beta_gamma.fna`. Eligibility and accession assignments are read from `results/accession_matching/`. All paths are relative to the project directory, and source files are read only.
+
+```{r}
+#| label: load-inputs
+
+options(stringsAsFactors = FALSE)
+
+matching_dir <- file.path("results", "accession_matching")
+core_input_dir <- file.path("data", "reference_core_genes", "nt")
+marker_input <- file.path(
+  "data", "reference_marker_genes", "18_1_polhgran_alpha_beta_gamma.fna"
+)
+core_individual_dir <- file.path("results", "alignments", "core_genes", "individual")
+core_concat_dir <- file.path("results", "alignments", "core_genes", "concatenated")
+three_individual_dir <- file.path("results", "alignments", "three_genes", "individual")
+three_concat_dir <- file.path("results", "alignments", "three_genes", "concatenated")
+
+required_files <- c(
+  file.path(matching_dir, "core_gene_presence_matrix.tsv"),
+  file.path(matching_dir, "marker_gene_presence_matrix.tsv"),
+  file.path(matching_dir, "dataset_eligibility.tsv"),
+  file.path(matching_dir, "marker_accession_matching_details.tsv"),
+  file.path(matching_dir, "accession_matching_details.tsv"),
+  file.path(matching_dir, "multiple_reference_sequences.tsv"),
+  marker_input
+)
+missing_files <- required_files[!file.exists(required_files)]
+if (length(missing_files) > 0L) {
+  stop("Required input files are missing:\n", paste(missing_files, collapse = "\n"), call. = FALSE)
+}
+
+core_files <- list.files(core_input_dir, pattern = "\\.fna$", full.names = FALSE, ignore.case = TRUE)
+if (length(core_files) == 0L) stop("No core-gene FASTA files found in ", core_input_dir, call. = FALSE)
+core_files <- core_files[order(as.integer(sub("_.*$", "", core_files)), core_files)]
+core_gene_names <- sub("\\.fna$", "", core_files, ignore.case = TRUE)
+core_gene_names <- sub("^[0-9]+_", "", core_gene_names)
+if (length(core_files) != 38L) stop("Expected 38 core-gene FASTA files, found ", length(core_files), call. = FALSE)
+if (anyDuplicated(core_gene_names)) stop("Core-gene names are not unique.", call. = FALSE)
+
+read_tsv <- function(path) read.delim(path, sep = "\t", quote = "", na.strings = "", check.names = FALSE, stringsAsFactors = FALSE)
+eligibility <- read_tsv(file.path(matching_dir, "dataset_eligibility.tsv"))
+core_details <- read_tsv(file.path(matching_dir, "accession_matching_details.tsv"))
+marker_details <- read_tsv(file.path(matching_dir, "marker_accession_matching_details.tsv"))
+multiple_refs <- read_tsv(file.path(matching_dir, "multiple_reference_sequences.tsv"))
+
+required_columns <- list(
+  eligibility = c("genome_group_id", "core_38_complete", "three_gene_eligible"),
+  core_details = c("Genome_ID", "Core_Gene", "Reference_FASTA", "FASTA_Header", "Detected_Accession", "Match_Status", "GenBank_Accession", "RefSeq_Accession"),
+  marker_details = c("Genome_ID", "Core_Gene", "Reference_FASTA", "FASTA_Header", "Detected_Accession", "Match_Status", "GenBank_Accession", "RefSeq_Accession"),
+  multiple_refs = c("genome_group_id", "Core_Gene", "Reference_FASTA", "Reference_Count", "FASTA_Accessions")
+)
+for (object_name in names(required_columns)) {
+  object <- get(object_name)
+  absent <- setdiff(required_columns[[object_name]], names(object))
+  if (length(absent) > 0L) stop(object_name, " is missing required columns: ", paste(absent, collapse = ", "), call. = FALSE)
+}
+
+dir.create(core_individual_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(core_concat_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(three_individual_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(three_concat_dir, recursive = TRUE, showWarnings = FALSE)
+```
+
+# Sequence selection
+
+The detail tables from the accession-matching analysis are the sole source of accession-to-`genome_group_id` assignments. Only rows marked `matched_unique` are eligible for sequence selection. The complete core-gene and three-gene eligibility flags are read directly from `dataset_eligibility.tsv`.
+
+The table `multiple_reference_sequences.tsv` identifies genome-group/gene combinations with more than one uniquely matched reference sequence. Selection is deterministic: a candidate whose accession is identified in the matching metadata as a GenBank accession is preferred to a RefSeq accession or another accession. If candidates remain at the same priority, their sequences must be identical; the lexicographically smallest accession is then selected. Different sequences at the same priority cause an error rather than an arbitrary choice.
+
+```{r}
+#| label: validate-selection-inputs
+
+if (any(!eligibility$core_38_complete %in% c("TRUE", "FALSE")) ||
+    any(!eligibility$three_gene_eligible %in% c("TRUE", "FALSE"))) {
+  stop("Eligibility columns must contain TRUE or FALSE.", call. = FALSE)
+}
+if (any(core_details$Match_Status == "matched_unique" & !nzchar(core_details$Genome_ID))) {
+  stop("A uniquely matched core record has an empty Genome_ID.", call. = FALSE)
+}
+if (any(marker_details$Match_Status == "matched_unique" & !nzchar(marker_details$Genome_ID))) {
+  stop("A uniquely matched marker record has an empty Genome_ID.", call. = FALSE)
+}
+multiple_keys <- paste(multiple_refs$genome_group_id, multiple_refs$Core_Gene, sep = "\r")
+if (anyDuplicated(multiple_keys)) stop("multiple_reference_sequences.tsv contains duplicate genome-group/gene keys.", call. = FALSE)
+for (i in seq_len(nrow(multiple_refs))) {
+  detail_source <- if (multiple_refs$Core_Gene[i] == "polh_gran") marker_details else core_details
+  matched_count <- sum(
+    detail_source$Match_Status == "matched_unique" &
+      detail_source$Genome_ID == multiple_refs$genome_group_id[i] &
+      detail_source$Core_Gene == multiple_refs$Core_Gene[i]
+  )
+  if (matched_count != multiple_refs$Reference_Count[i]) {
+    stop("Reference count disagrees with multiple_reference_sequences.tsv for ", multiple_refs$genome_group_id[i], "/", multiple_refs$Core_Gene[i], call. = FALSE)
+  }
+}
+
+parse_fasta <- function(path) {
+  lines <- readLines(path, warn = FALSE)
+  header_rows <- which(startsWith(lines, ">"))
+  if (length(header_rows) == 0L || header_rows[1] != 1L) stop("Invalid FASTA file: ", path, call. = FALSE)
+  records <- lapply(seq_along(header_rows), function(i) {
+    start <- header_rows[i] + 1L
+    end <- if (i < length(header_rows)) header_rows[i + 1L] - 1L else length(lines)
+    header <- substring(lines[header_rows[i]], 2L)
+    sequence <- paste(lines[start:end][nzchar(trimws(lines[start:end]))], collapse = "")
+    if (!nzchar(sequence)) stop("Empty FASTA sequence in ", path, " header ", header, call. = FALSE)
+    list(header = header, accession = sub("[[:space:]].*$", "", header), sequence = sequence)
+  })
+  headers <- vapply(records, `[[`, character(1), "header")
+  if (anyDuplicated(headers)) stop("Duplicate FASTA headers in ", path, call. = FALSE)
+  records
+}
+
+all_input_records <- list()
+for (file in c(file.path(core_input_dir, core_files), marker_input)) {
+  all_input_records[[basename(file)]] <- parse_fasta(file)
+}
+
+normalise_accession <- function(x) sub("\\.[0-9]+$", "", x)
+metadata_accessions <- function(x) {
+  x <- unlist(strsplit(paste(x, collapse = ";"), ";", fixed = TRUE), use.names = FALSE)
+  unique(normalise_accession(x[nzchar(x) & !is.na(x)]))
+}
+
+candidate_priority <- function(row) {
+  accession <- normalise_accession(row$Detected_Accession)
+  if (accession %in% metadata_accessions(row$GenBank_Accession)) return(1L)
+  if (accession %in% metadata_accessions(c(row$RefSeq_Accession, row$Matched_Metadata_Aliases))) return(2L)
+  3L
+}
+
+select_sequences <- function(details, dataset, genes, eligible_ids) {
+  details <- details[details$Match_Status == "matched_unique" & details$Core_Gene %in% genes & details$Genome_ID %in% eligible_ids, , drop = FALSE]
+  selection_rows <- list()
+  selected_rows <- list()
+  if (nrow(details) == 0L) stop("No matched records available for dataset ", dataset, call. = FALSE)
+  keys <- unique(paste(details$Genome_ID, details$Core_Gene, sep = "\r"))
+  for (key in sort(keys)) {
+    parts <- strsplit(key, "\r", fixed = TRUE)[[1]]
+    group_id <- parts[1]; gene <- parts[2]
+    rows <- details[details$Genome_ID == group_id & details$Core_Gene == gene, , drop = FALSE]
+    priorities <- vapply(seq_len(nrow(rows)), function(i) candidate_priority(rows[i, , drop = FALSE]), integer(1))
+    best <- which(priorities == min(priorities))
+    records <- all_input_records[[rows$Reference_FASTA[best[1]]]]
+    sequences <- vapply(best, function(i) {
+      hit <- which(vapply(records, `[[`, character(1), "header") == rows$FASTA_Header[i])
+      if (length(hit) != 1L) stop("Could not uniquely locate FASTA header in input: ", rows$FASTA_Header[i], call. = FALSE)
+      records[[hit]]$sequence
+    }, character(1))
+    if (length(unique(sequences)) > 1L) {
+      stop("Different sequences remain at the same selection priority for ", dataset, ", ", group_id, ", ", gene, call. = FALSE)
+    }
+    ordered <- best[order(normalise_accession(rows$Detected_Accession[best]))]
+    chosen <- ordered[1]
+    reason <- if (nrow(rows) == 1L) "single uniquely matched reference" else if (length(best) < nrow(rows)) "preferred higher-priority reference" else "identical same-priority references; accession tie-break"
+    alternatives <- setdiff(rows$Detected_Accession, rows$Detected_Accession[chosen])
+    selection_rows[[length(selection_rows) + 1L]] <- data.frame(
+      dataset = dataset, gene = gene, genome_group_id = group_id,
+      selected_accession = rows$Detected_Accession[chosen],
+      alternative_accessions = paste(alternatives, collapse = ";"),
+      selection_reason = reason, stringsAsFactors = FALSE
+    )
+    selected_rows[[length(selected_rows) + 1L]] <- rows[chosen, , drop = FALSE]
+  }
+  list(selection = do.call(rbind, selection_rows), selected = do.call(rbind, selected_rows))
+}
+
+core_ids <- eligibility$genome_group_id[eligibility$core_38_complete == "TRUE"]
+three_ids <- eligibility$genome_group_id[eligibility$three_gene_eligible == "TRUE"]
+lef8_gene <- core_gene_names[tolower(gsub("-", "", core_gene_names)) == "lef8"]
+lef9_gene <- core_gene_names[tolower(gsub("-", "", core_gene_names)) == "lef9"]
+if (length(lef8_gene) != 1L || length(lef9_gene) != 1L) stop("Could not identify exactly one lef-8 and one lef-9 core FASTA file.", call. = FALSE)
+
+core_selected <- select_sequences(core_details, "core_38", core_gene_names, core_ids)
+marker_details$Core_Gene[marker_details$Reference_FASTA == basename(marker_input)] <- "polh_gran"
+marker_core_details <- marker_details[marker_details$Core_Gene %in% c("polh_gran", lef8_gene, lef9_gene), , drop = FALSE]
+marker_core_details$Core_Gene[marker_core_details$Core_Gene == lef8_gene] <- "lef8"
+marker_core_details$Core_Gene[marker_core_details$Core_Gene == lef9_gene] <- "lef9"
+three_selected <- select_sequences(rbind(core_details, marker_core_details), "three_genes", c("polh_gran", "lef8", "lef9"), three_ids)
+
+selection_table <- rbind(core_selected$selection, three_selected$selection)
+write.table(selection_table, file.path("results", "alignments", "reference_sequence_selection.tsv"), sep = "\t", quote = FALSE, row.names = FALSE, na = "")
+```
+
+The number of selected records is calculated from the current matching results. The CuniNPV exception is checked explicitly before concatenation.
+
+```{r}
+#| label: validate-cuni-exception
+
+cuni <- eligibility[eligibility$genome_group_id == "AF403738" | eligibility$eligibility_reason == "cuni_exception_two_genes", , drop = FALSE]
+if (nrow(cuni) != 1L || cuni$three_gene_eligible != "TRUE" || cuni$polh_gran != 0L || cuni$lef8 != 1L || cuni$lef9 != 1L) {
+  stop("The expected CuniNPV eligibility exception is not present in dataset_eligibility.tsv.", call. = FALSE)
+}
+cuni_group <- cuni$genome_group_id
+```
+
+# Multiple sequence alignment
+
+MAFFT is run independently for every core-gene input and again for each of the three marker inputs. The command uses nucleotide mode, automatic strategy selection, and four threads. Standard output is written directly to the alignment file; standard error is written to a temporary diagnostic file and is never treated as FASTA content. A non-zero return status stops the document.
+
+```{r}
+#| label: check-mafft
+
+mafft_path <- Sys.which("mafft")
+if (!nzchar(mafft_path)) stop("MAFFT is not available through Sys.which('mafft'). Install MAFFT and ensure it is on the RStudio PATH.", call. = FALSE)
+mafft_version <- system2(mafft_path, "--version", stdout = TRUE, stderr = TRUE)
+mafft_version <- paste(mafft_version, collapse = " ")
+mafft_parameters <- "--nuc --auto --thread 4"
+```
+
+```{r}
+#| label: run-mafft-alignments
+
+run_mafft <- function(input, output) {
+  error_file <- tempfile("mafft_stderr_")
+  if (file.exists(output)) unlink(output)
+  status <- system2(mafft_path, c("--nuc", "--auto", "--thread", "4", input), stdout = output, stderr = error_file)
+  error_text <- if (file.exists(error_file)) paste(readLines(error_file, warn = FALSE), collapse = "\n") else ""
+  unlink(error_file)
+  if (!identical(status, 0L) || !file.exists(output) || file.info(output)$size == 0) {
+    if (file.exists(output)) unlink(output)
+    stop("MAFFT failed for ", input, " (status ", status, "): ", error_text, call. = FALSE)
+  }
+  invisible(output)
+}
+
+alignment_files <- list()
+for (file in core_files) {
+  input <- file.path(core_input_dir, file)
+  output <- file.path(core_individual_dir, file)
+  run_mafft(input, output)
+  alignment_files[[paste0("core_38/", sub("\\.fna$", "", file, ignore.case = TRUE))]] <- output
+}
+three_inputs <- c(
+  polh_gran = marker_input,
+  lef8 = file.path(core_input_dir, core_files[match(lef8_gene, core_gene_names)]),
+  lef9 = file.path(core_input_dir, core_files[match(lef9_gene, core_gene_names)])
+)
+three_output_names <- c(polh_gran = basename(marker_input), lef8 = core_files[match(lef8_gene, core_gene_names)], lef9 = core_files[match(lef9_gene, core_gene_names)])
+for (gene in names(three_inputs)) {
+  output <- file.path(three_individual_dir, three_output_names[gene])
+  run_mafft(three_inputs[gene], output)
+  alignment_files[[paste0("three_genes/", gene)]] <- output
+}
+```
+
+# Alignment validation and statistics
+
+Each alignment is checked against its original FASTA file. Header identity, sequence counts, non-empty sequences, sequence losses, and uniform alignment length are validated. Gap percentages are calculated over all cells of each alignment.
+
+```{r}
+#| label: validate-alignments
+
+alignment_stats <- list()
+alignment_records <- list()
+validate_alignment <- function(input, alignment, dataset, gene) {
+  input_records <- parse_fasta(input)
+  aligned_records <- parse_fasta(alignment)
+  input_headers <- vapply(input_records, `[[`, character(1), "header")
+  aligned_headers <- vapply(aligned_records, `[[`, character(1), "header")
+  lengths <- nchar(vapply(aligned_records, `[[`, character(1), "sequence"))
+  if (length(input_records) != length(aligned_records) || !setequal(input_headers, aligned_headers)) stop("Alignment changed sequence count or FASTA headers: ", alignment, call. = FALSE)
+  if (any(lengths == 0L) || length(unique(lengths)) != 1L) stop("Alignment sequences do not have one common non-empty length: ", alignment, call. = FALSE)
+  input_lengths <- nchar(vapply(input_records, `[[`, character(1), "sequence"))
+  sequence_matrix <- do.call(rbind, strsplit(vapply(aligned_records, `[[`, character(1), "sequence"), split = "", fixed = TRUE))
+  alignment_records[[paste(dataset, gene, sep = "\r")]] <<- aligned_records
+  data.frame(dataset = dataset, gene = gene, input_file = input, alignment_file = alignment,
+             sequence_count = length(input_records), minimum_input_length = min(input_lengths),
+             maximum_input_length = max(input_lengths), alignment_length = unique(lengths),
+             gap_percentage = 100 * sum(sequence_matrix == "-") / length(sequence_matrix),
+             mafft_parameters = mafft_parameters, stringsAsFactors = FALSE)
+}
+
+for (file in core_files) {
+  gene <- sub("\\.fna$", "", file, ignore.case = TRUE)
+  gene <- sub("^[0-9]+_", "", gene)
+  alignment_stats[[length(alignment_stats) + 1L]] <- validate_alignment(file.path(core_input_dir, file), file.path(core_individual_dir, file), "core_38", gene)
+}
+alignment_stats[[length(alignment_stats) + 1L]] <- validate_alignment(marker_input, file.path(three_individual_dir, basename(marker_input)), "three_genes", "polh_gran")
+alignment_stats[[length(alignment_stats) + 1L]] <- validate_alignment(file.path(core_input_dir, core_files[match(lef8_gene, core_gene_names)]), file.path(three_individual_dir, three_output_names["lef8"]), "three_genes", "lef8")
+alignment_stats[[length(alignment_stats) + 1L]] <- validate_alignment(file.path(core_input_dir, core_files[match(lef9_gene, core_gene_names)]), file.path(three_individual_dir, three_output_names["lef9"]), "three_genes", "lef9")
+alignment_statistics <- do.call(rbind, alignment_stats)
+write.table(alignment_statistics, file.path("results", "alignments", "alignment_statistics.tsv"), sep = "\t", quote = FALSE, row.names = FALSE, na = "")
+```
+
+# Concatenation
+
+The core concatenation follows the numeric order of the input filenames. The three-gene concatenation follows polh/gran, lef-8, and lef-9. Sequence identity is joined exclusively through the selected `genome_group_id`. CuniNPV receives gap characters for the missing polh/gran partition only; no sequence is fabricated.
+
+```{r}
+#| label: concatenate-alignments
+
+get_aligned_sequence <- function(dataset, gene, detail_row) {
+  records <- alignment_records[[paste(dataset, gene, sep = "\r")]]
+  hit <- which(vapply(records, `[[`, character(1), "header") == detail_row$FASTA_Header)
+  if (length(hit) != 1L) stop("Selected header not found in alignment for ", dataset, ": ", detail_row$FASTA_Header, call. = FALSE)
+  records[[hit]]$sequence
+}
+
+build_concatenation <- function(dataset, genes, eligible_ids, selected_details, output, partition_file) {
+  selected_details <- selected_details[selected_details$Genome_ID %in% eligible_ids, , drop = FALSE]
+  lengths <- vapply(genes, function(g) alignment_statistics$alignment_length[alignment_statistics$dataset == dataset & alignment_statistics$gene == g], integer(1))
+  partitions <- data.frame(gene = genes, source_alignment = character(length(genes)), start = integer(length(genes)), end = integer(length(genes)), alignment_length = lengths, stringsAsFactors = FALSE)
+  partitions$source_alignment <- vapply(genes, function(g) file.path(if (dataset == "core_38") core_individual_dir else three_individual_dir, if (dataset == "core_38") core_files[match(g, core_gene_names)] else three_output_names[g]), character(1))
+  partitions$start <- cumsum(c(1L, head(lengths, -1L)))
+  partitions$end <- cumsum(lengths)
+  groups <- sort(eligible_ids)
+  output_records <- character()
+  for (group_id in groups) {
+    pieces <- character(length(genes))
+    for (i in seq_along(genes)) {
+      gene <- genes[i]
+      row <- selected_details[selected_details$Genome_ID == group_id & selected_details$Core_Gene == gene, , drop = FALSE]
+      if (nrow(row) == 0L) {
+        if (dataset == "three_genes" && group_id == cuni_group && gene == "polh_gran") pieces[i] <- paste(rep("-", lengths[i]), collapse = "") else stop("Missing selected sequence for ", dataset, ", ", group_id, ", ", gene, call. = FALSE)
+      } else if (nrow(row) != 1L) stop("More than one selected sequence for ", dataset, ", ", group_id, ", ", gene, call. = FALSE) else pieces[i] <- get_aligned_sequence(dataset, gene, row)
+    }
+    output_records <- c(output_records, paste0(">", group_id), pieces[[1]])
+    if (length(pieces) > 1L) output_records[length(output_records)] <- paste0(pieces, collapse = "")
+  }
+  if (length(groups) == 0L) stop("No eligible genome groups for ", dataset, call. = FALSE)
+  writeLines(output_records, output, useBytes = TRUE)
+  write.table(partitions, partition_file, sep = "\t", quote = FALSE, row.names = FALSE, na = "")
+  list(partitions = partitions, groups = groups, length = sum(lengths))
+}
+
+core_concat <- build_concatenation("core_38", core_gene_names, core_ids, core_selected$selected, file.path(core_concat_dir, "core_38.fna"), file.path(core_concat_dir, "partitions.tsv"))
+three_selected$selected$Core_Gene[three_selected$selected$Core_Gene == "lef8"] <- "lef8"
+three_selected$selected$Core_Gene[three_selected$selected$Core_Gene == "lef9"] <- "lef9"
+three_concat <- build_concatenation("three_genes", c("polh_gran", "lef8", "lef9"), three_ids, three_selected$selected, file.path(three_concat_dir, "three_genes.fna"), file.path(three_concat_dir, "partitions.tsv"))
+```
+
+# Validation
+
+The final checks validate FASTA format, uniqueness of concatenated genome-group headers, common concatenation lengths, exact partition coverage, complete core-gene coverage, three-gene eligibility, and the CuniNPV gap-only polh/gran partition.
+
+```{r}
+#| label: final-validation
+
+validate_concat <- function(path, expected_groups, partitions) {
+  records <- parse_fasta(path)
+  headers <- vapply(records, `[[`, character(1), "header")
+  lengths <- nchar(vapply(records, `[[`, character(1), "sequence"))
+  if (!setequal(headers, expected_groups) || anyDuplicated(headers)) stop("Concatenated FASTA headers are invalid: ", path, call. = FALSE)
+  if (length(unique(lengths)) != 1L || unique(lengths) != sum(partitions$alignment_length)) stop("Concatenation length validation failed: ", path, call. = FALSE)
+  if (!identical(partitions$start, c(1L, head(partitions$end, -1L) + 1L)) || partitions$end[nrow(partitions)] != unique(lengths)) stop("Partition validation failed: ", path, call. = FALSE)
+  invisible(records)
+}
+core_records <- validate_concat(file.path(core_concat_dir, "core_38.fna"), core_ids, core_concat$partitions)
+three_records <- validate_concat(file.path(three_concat_dir, "three_genes.fna"), three_ids, three_concat$partitions)
+cuni_record <- three_records[[which(vapply(three_records, `[[`, character(1), "header") == cuni_group)]]
+cuni_polh <- substring(cuni_record$sequence, three_concat$partitions$start[1], three_concat$partitions$end[1])
+if (!nzchar(cuni_polh) || any(strsplit(cuni_polh, "", fixed = TRUE)[[1]] != "-")) stop("CuniNPV polh/gran partition is not gap-only.", call. = FALSE)
+if (nchar(cuni_polh) != three_concat$partitions$alignment_length[1]) stop("CuniNPV polh/gran gap partition has the wrong length.", call. = FALSE)
+if (!(cuni_group %in% vapply(three_records, `[[`, character(1), "header"))) stop("CuniNPV is absent from the three-gene concatenation.", call. = FALSE)
+
+validation_summary <- data.frame(
+  measure = c("Core individual alignments", "Three-gene individual alignments", "Core concatenated genome groups", "Three-gene concatenated genome groups", "Core concatenation length", "Three-gene concatenation length", "Multiple-reference selections", "CuniNPV exception"),
+  value = c(sum(alignment_statistics$dataset == "core_38"), sum(alignment_statistics$dataset == "three_genes"), length(core_ids), length(three_ids), core_concat$length, three_concat$length, sum(selection_table$alternative_accessions != ""), "passed"),
+  stringsAsFactors = FALSE
+)
+```
+
+The following summary is generated from the completed run.
+
+```{r}
+#| label: display-validation-summary
+
+knitr::kable(validation_summary, col.names = c("Measure", "Value"), format = "html", table.attr = 'class="table table-striped table-sm"')
+```
+
+# Alignment statistics
+
+The full per-alignment statistics are written to `results/alignments/alignment_statistics.tsv`. The table below reports the same dynamically calculated values for review.
+
+```{r}
+#| label: display-alignment-statistics
+
+knitr::kable(alignment_statistics, format = "html", table.attr = 'class="table table-striped table-sm"')
+```
+
+# Output files
+
+The analysis writes individual alignments to `results/alignments/core_genes/individual/` and `results/alignments/three_genes/individual/`. The concatenated FASTA files and 1-based, inclusive partition tables are written to the corresponding `concatenated/` directories. The reference-selection audit table is `results/alignments/reference_sequence_selection.tsv`, and the complete alignment statistics are `results/alignments/alignment_statistics.tsv`.
+
+MAFFT was invoked with `{r} mafft_parameters` and the installed version reported as `{r} mafft_version`. Re-rendering removes and regenerates the alignment outputs, so stale alignments are not silently reused.

@@ -1,0 +1,1556 @@
+---
+title: "Accession Matching of Baculovirus Core Genes"
+subtitle: "Comparison of reference core genes with baculovirus genome metadata"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-summary: "Show R code"
+    code-tools: true
+    theme: cosmo
+execute:
+  echo: true
+  cache: false
+---
+
+::: {.callout-note}
+This report was generated using AI under general human direction. At the time of generation, the contents have not been comprehensively reviewed by a human analyst.
+
+<!--
+To indicate human review: Delete the line above about contents not being reviewed, and replace this comment with:
+The contents have been reviewed and validated by [Your Name], [Your Role] on [Date].
+-->
+:::
+
+## Introduction
+
+The purpose of this analysis is to assign the available nucleotide reference sequences for baculovirus core genes to genome groups in a separately assembled baculovirus genome database using genome accessions. The analysis provides an inventory and validation of the reference collection: it documents which reference records can be linked to which metadata-defined genome groups and core genes.
+
+This is an accession-based analysis, not a sequence-based core-gene identification procedure. It does not perform homology searches, alignments, or gene discovery. An accession-linked reference record documents an available reference sequence and a successful metadata relationship; the absence of a match means only that the current accession information did not identify one.
+
+## Data Sources
+
+### Genome metadata
+
+The genome metadata are read from `../baculovirus-genome-gathering/data/metadata/baculovirus_genome_metadata.tsv`. This table contains genome accessions, accession versions, GenBank/RefSeq relationships, genome-group identifiers, and organism names, among other fields. The metadata originate in the separate `baculovirus-genome-gathering` project. They are read for accession resolution and genome-group construction only; neither the metadata file nor that project is modified.
+
+### Reference core-gene sequences
+
+The nucleotide reference sequences are maintained in two independent source directories:
+
+* `data/reference_core_genes/alpha_beta/`, containing Alpha- and Betabaculovirus reference sequences;
+* `data/reference_core_genes/gamma_delta/`, containing Gamma- and Deltabaculovirus reference sequences.
+
+The two source collections can be updated independently. New reference sequences can be added, existing sequences can be corrected or replaced, and obsolete sequences can be removed. Such changes are incorporated automatically at the next render. The source FASTA files are read only and are not modified by this analysis.
+
+The project also contains a separate marker collection at `data/reference_marker_genes/18_1_polhgran_alpha_beta_gamma.fna`. This file contains reference sequences for **polh/gran**, which is not one of the 38 universal core genes and is therefore kept outside the core-gene directories and outside the 38-gene presence matrix. The marker file is read-only and is used only for the additional classical three-gene dataset consisting of polh/gran, lef-8, and lef-9.
+
+The two datasets are evaluated separately. The 38-core-gene dataset retains the complete project-defined core-gene collection. The three-gene dataset combines the independently matched polh/gran marker with the existing `lef8` and `lef9` columns from the core-gene analysis. CuniNPV (GenBank accession `AF403738`) is a documented biological exception: it has no homologous polh/gran reference, but it remains eligible for the later three-gene workflow when lef-8 and lef-9 are both present. The missing polh/gran partition is reserved for gap representation in the downstream alignment document; no artificial sequence is created here.
+
+The relevant input structure is:
+
+```text
+data/
+├── reference_core_genes/
+│   ├── alpha_beta/
+│   ├── gamma_delta/
+│   └── nt/
+└── reference_marker_genes/
+    └── 18_1_polhgran_alpha_beta_gamma.fna
+```
+
+The `nt/` directory contains only generated combined core-gene FASTA files. The `reference_marker_genes/` directory stores additional markers that are not part of the universal core-gene set; polh/gran is kept separate because it is not universally represented and because CuniNPV lacks a homologous polh/gran gene.
+
+Each `.fna` file represents one project-defined baculovirus core gene. The filename contains a running number and the core-gene name, for example `02_pif4.fna`. A file contains multiple nucleotide sequences for that same core gene. Each FASTA entry consists of a header beginning with `>` and a genome accession followed by its nucleotide sequence, for example:
+
+```text
+>AF403738
+ATGC...
+
+>DQ317692
+ATGC...
+```
+
+These accessions identify the corresponding virus genomes; they are not separate gene accessions. The core gene is identified by the FASTA filename, while the accession in the FASTA header identifies the genome to which the reference sequence is linked. The number of sequences can differ among core genes, so the number of genes and reference records is determined from the current files at render time rather than being fixed in the analysis.
+
+```{r}
+#| label: load-metadata-and-validate-paths
+
+metadata_path <- file.path(
+  "..", "baculovirus-genome-gathering", "data", "metadata",
+  "baculovirus_genome_metadata.tsv"
+)
+reference_root <- file.path("data", "reference_core_genes")
+alpha_beta_dir <- file.path(reference_root, "alpha_beta")
+gamma_delta_dir <- file.path(reference_root, "gamma_delta")
+fasta_dir <- file.path("data", "reference_core_genes", "nt")
+marker_path <- file.path(
+  "data", "reference_marker_genes", "18_1_polhgran_alpha_beta_gamma.fna"
+)
+output_dir <- file.path("results", "accession_matching")
+
+if (!file.exists(metadata_path)) {
+  stop("Metadata file not found: ", metadata_path, call. = FALSE)
+}
+if (!dir.exists(alpha_beta_dir) || !dir.exists(gamma_delta_dir) || !dir.exists(fasta_dir)) {
+  stop(
+    "Reference FASTA directories not found. Expected: ",
+    paste(c(alpha_beta_dir, gamma_delta_dir, fasta_dir), collapse = ", "),
+    call. = FALSE
+  )
+}
+if (!file.exists(marker_path)) {
+  stop("Marker FASTA file not found: ", marker_path, call. = FALSE)
+}
+
+reference_files <- function(directory) {
+  files <- sort(list.files(
+    directory,
+    pattern = "\\.fna$",
+    full.names = FALSE,
+    ignore.case = TRUE
+  ))
+  if (length(files) == 0L) {
+    stop("No .fna files found in: ", directory, call. = FALSE)
+  }
+  duplicate_names <- unique(files[
+    duplicated(tolower(files)) | duplicated(tolower(files), fromLast = TRUE)
+  ])
+  if (length(duplicate_names) > 0L) {
+    stop(
+      "Duplicate or case-conflicting FASTA filenames in ", directory, ": ",
+      paste(duplicate_names, collapse = ", "),
+      call. = FALSE
+    )
+  }
+  files
+}
+
+validate_reference_fasta <- function(path) {
+  lines <- readLines(path, warn = FALSE)
+  header_rows <- which(startsWith(lines, ">"))
+  if (length(header_rows) == 0L) {
+    stop("No FASTA headers found in: ", path, call. = FALSE)
+  }
+  if (header_rows[1] != 1L) {
+    stop("Sequence data occur before the first FASTA header in: ", path, call. = FALSE)
+  }
+
+  headers <- substring(lines[header_rows], 2L)
+  duplicate_headers <- unique(headers[duplicated(headers)])
+  if (length(duplicate_headers) > 0L) {
+    stop(
+      "Duplicate FASTA headers in ", basename(path), ": ",
+      paste(duplicate_headers, collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  sequence_line_count <- 0L
+  for (i in seq_along(header_rows)) {
+    start <- header_rows[i] + 1L
+    end <- if (i < length(header_rows)) header_rows[i + 1L] - 1L else length(lines)
+    sequence_lines <- if (start <= end) lines[start:end] else character()
+    sequence_lines <- sequence_lines[nzchar(trimws(sequence_lines))]
+    if (length(sequence_lines) == 0L) {
+      stop("FASTA header has no sequence in: ", path, call. = FALSE)
+    }
+    if (any(!grepl(
+      "^[[:space:]]*[ACGTURYKMSWBDHVNacgturykmswbdhvn-]+[[:space:]]*$",
+      sequence_lines
+    ))) {
+      stop("Invalid nucleotide characters in: ", path, call. = FALSE)
+    }
+    sequence_line_count <- sequence_line_count + length(sequence_lines)
+  }
+
+  list(
+    lines = lines,
+    headers = headers,
+    sequence_count = length(header_rows),
+    sequence_line_count = sequence_line_count
+  )
+}
+
+alpha_beta_files <- reference_files(alpha_beta_dir)
+gamma_delta_files <- reference_files(gamma_delta_dir)
+alpha_only <- setdiff(alpha_beta_files, gamma_delta_files)
+gamma_only <- setdiff(gamma_delta_files, alpha_beta_files)
+if (length(alpha_only) > 0L || length(gamma_only) > 0L) {
+  stop(
+    paste(
+      c(
+        "Reference FASTA filename lists do not match.",
+        paste("Only in alpha_beta/:", if (length(alpha_only)) paste(alpha_only, collapse = ", ") else "none"),
+        paste("Only in gamma_delta/:", if (length(gamma_only)) paste(gamma_only, collapse = ", ") else "none")
+      ),
+      collapse = "\n"
+    ),
+    call. = FALSE
+  )
+}
+
+alpha_beta_data <- lapply(
+  file.path(alpha_beta_dir, alpha_beta_files),
+  validate_reference_fasta
+)
+gamma_delta_data <- lapply(
+  file.path(gamma_delta_dir, gamma_delta_files),
+  validate_reference_fasta
+)
+names(alpha_beta_data) <- alpha_beta_files
+names(gamma_delta_data) <- gamma_delta_files
+
+marker_data <- validate_reference_fasta(marker_path)
+
+combined_files <- alpha_beta_files
+combined_core_genes <- sub("\\.fna$", "", combined_files, ignore.case = TRUE)
+combined_core_genes <- sub("^[0-9]+_", "", combined_core_genes)
+reference_counts <- data.frame(
+  `Core gene` = combined_core_genes,
+  `Alpha/Beta sequences` = vapply(alpha_beta_data, `[[`, integer(1), "sequence_count"),
+  `Gamma/Delta sequences` = vapply(gamma_delta_data, `[[`, integer(1), "sequence_count"),
+  check.names = FALSE,
+  stringsAsFactors = FALSE
+)
+reference_counts[["Total sequences"]] <-
+  reference_counts[["Alpha/Beta sequences"]] + reference_counts[["Gamma/Delta sequences"]]
+
+generation_dir <- tempfile("nt_generation_", tmpdir = reference_root)
+backup_dir <- tempfile("nt_backup_", tmpdir = reference_root)
+dir.create(generation_dir)
+dir.create(backup_dir)
+generation_succeeded <- FALSE
+
+tryCatch({
+  for (file_base in combined_files) {
+    combined_lines <- c(
+      alpha_beta_data[[file_base]]$lines,
+      gamma_delta_data[[file_base]]$lines
+    )
+    combined_headers <- combined_lines[startsWith(combined_lines, ">")]
+    duplicate_headers <- unique(combined_headers[
+      duplicated(combined_headers)
+    ])
+    if (length(duplicate_headers) > 0L) {
+      stop(
+        "Duplicate FASTA headers after combining ", file_base, ": ",
+        paste(duplicate_headers, collapse = ", "),
+        call. = FALSE
+      )
+    }
+
+    generated_path <- file.path(generation_dir, file_base)
+    writeLines(combined_lines, generated_path, useBytes = TRUE)
+    generated_lines <- readLines(generated_path, warn = FALSE)
+    if (!identical(generated_lines, combined_lines)) {
+      stop("Generated FASTA validation failed for: ", file_base, call. = FALSE)
+    }
+    if (sum(startsWith(generated_lines, ">")) != reference_counts[
+      reference_counts[["Core gene"]] == sub("\\.fna$", "", sub("^[0-9]+_", "", file_base)),
+      "Total sequences"
+    ]) {
+      stop("Combined sequence count validation failed for: ", file_base, call. = FALSE)
+    }
+  }
+
+  old_files <- list.files(
+    fasta_dir,
+    pattern = "\\.fna$",
+    full.names = TRUE,
+    ignore.case = TRUE
+  )
+  if (length(old_files) > 0L) {
+    moved_old <- file.rename(old_files, file.path(backup_dir, basename(old_files)))
+    if (any(!moved_old)) stop("Could not stage the previous generated FASTA files.", call. = FALSE)
+  }
+  generated_files <- list.files(generation_dir, pattern = "\\.fna$", full.names = TRUE)
+  moved_new <- file.rename(generated_files, file.path(fasta_dir, basename(generated_files)))
+  if (any(!moved_new)) stop("Could not install all generated FASTA files.", call. = FALSE)
+  generation_succeeded <- TRUE
+}, error = function(error) {
+  if (dir.exists(backup_dir)) {
+    unlink(list.files(fasta_dir, pattern = "\\.fna$", full.names = TRUE), force = TRUE)
+    staged_files <- list.files(backup_dir, pattern = "\\.fna$", full.names = TRUE)
+    if (length(staged_files) > 0L) {
+      file.rename(staged_files, file.path(fasta_dir, basename(staged_files)))
+    }
+  }
+  stop(conditionMessage(error), call. = FALSE)
+})
+
+unlink(c(generation_dir, backup_dir), recursive = TRUE, force = TRUE)
+if (!generation_succeeded) stop("Reference FASTA generation failed.", call. = FALSE)
+
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+
+metadata <- read.delim(
+  metadata_path,
+  sep = "\t",
+  quote = "\"",
+  stringsAsFactors = FALSE,
+  check.names = FALSE,
+  na.strings = c("NA", ""),
+  colClasses = "character"
+)
+
+required_columns <- c(
+  "accession", "accession_version", "secondary_accessions", "sourcedb",
+  "refseq_relation", "genome_group_id", "organism"
+)
+missing_columns <- setdiff(required_columns, names(metadata))
+if (length(missing_columns) > 0L) {
+  stop(
+    "Required metadata columns are missing: ",
+    paste(missing_columns, collapse = ", "),
+    call. = FALSE
+  )
+}
+if (anyNA(metadata$genome_group_id) || any(!nzchar(metadata$genome_group_id))) {
+  stop("Metadata contains missing genome_group_id values.", call. = FALSE)
+}
+```
+
+Every `.fna` file in the nucleotide reference directory is included. The number of genes is determined from those files at render time. Header validation and per-file sequence counts are performed before matching. No protein FASTA files are used.
+
+```{r}
+#| label: read-and-validate-fasta-headers
+
+fasta_files <- sort(list.files(
+  fasta_dir,
+  pattern = "\\.fna$",
+  full.names = TRUE,
+  ignore.case = TRUE
+))
+if (length(fasta_files) == 0L) {
+  stop(
+    "No nucleotide FASTA files with the .fna extension were found in: ",
+    fasta_dir,
+    call. = FALSE
+  )
+}
+
+file_bases <- basename(fasta_files)
+gene_names <- sub("\\.fna$", "", file_bases, ignore.case = TRUE)
+gene_names <- sub("^[0-9]+_", "", gene_names)
+if (any(!nzchar(gene_names))) {
+  stop("At least one FASTA filename does not yield a non-empty core-gene name.", call. = FALSE)
+}
+duplicate_gene_names <- unique(gene_names[
+  duplicated(tolower(gene_names)) | duplicated(tolower(gene_names), fromLast = TRUE)
+])
+if (length(duplicate_gene_names) > 0L) {
+  stop(
+    "Core-gene names derived from FASTA filenames must be unique. Conflicts: ",
+    paste(duplicate_gene_names, collapse = ", "),
+    call. = FALSE
+  )
+}
+
+fasta_records <- vector("list", length(fasta_files))
+fasta_qc <- vector("list", length(fasta_files))
+
+for (i in seq_along(fasta_files)) {
+  file <- fasta_files[i]
+  lines <- readLines(file, warn = FALSE)
+  header_rows <- which(startsWith(lines, ">"))
+  headers <- substring(lines[header_rows], 2L)
+  header_ids <- sub("[[:space:]].*$", "", headers)
+  duplicate_header <- duplicated(header_ids) |
+    duplicated(header_ids, fromLast = TRUE)
+  simple_header <- nzchar(header_ids) &
+    grepl("^[A-Za-z0-9_]+(\\.[0-9]+)?$", header_ids)
+  orphan_sequence_lines <- if (length(header_rows) == 0L) {
+    sum(nzchar(trimws(lines)))
+  } else if (header_rows[1] > 1L) {
+    sum(nzchar(trimws(lines[seq_len(header_rows[1] - 1L)])))
+  } else {
+    0L
+  }
+
+  file_base <- basename(file)
+  gene <- gene_names[i]
+
+  fasta_records[[i]] <- data.frame(
+    Core_Gene = gene,
+    Reference_FASTA = file_base,
+    FASTA_Header = headers,
+    Detected_Accession = header_ids,
+    FASTA_Duplicate = duplicate_header,
+    stringsAsFactors = FALSE
+  )
+
+  fasta_qc[[i]] <- data.frame(
+    Reference_FASTA = file_base,
+    Core_Gene = gene,
+    Sequence_Count = length(header_rows),
+    Unique_Header_Count = length(unique(header_ids)),
+    Duplicate_Header_Record_Count = sum(duplicated(header_ids)),
+    Invalid_Header_Count = sum(!simple_header),
+    Orphan_Sequence_Line_Count = orphan_sequence_lines,
+    stringsAsFactors = FALSE
+  )
+}
+
+fasta_records <- do.call(rbind, fasta_records)
+fasta_qc <- do.call(rbind, fasta_qc)
+write.table(
+  fasta_qc,
+  file.path(output_dir, "fasta_validation.tsv"),
+  sep = "\t", quote = FALSE, row.names = FALSE, na = ""
+)
+
+if (any(fasta_qc$Sequence_Count == 0L) ||
+    any(fasta_qc$Invalid_Header_Count > 0L) ||
+    any(fasta_qc$Orphan_Sequence_Line_Count > 0L)) {
+  stop(
+    "FASTA validation failed; see results/accession_matching/fasta_validation.tsv.",
+    call. = FALSE
+  )
+}
+```
+
+```{r}
+#| label: read-and-validate-polhgran-marker
+
+marker_header_ids <- sub("[[:space:]].*$", "", marker_data$headers)
+marker_simple_header <- nzchar(marker_header_ids) &
+  grepl("^[A-Za-z0-9_]+(\\.[0-9]+)?$", marker_header_ids)
+if (any(!marker_simple_header)) {
+  stop(
+    "The polh/gran marker FASTA contains invalid accession headers.",
+    call. = FALSE
+  )
+}
+
+marker_records <- data.frame(
+  Core_Gene = "polh_gran",
+  Reference_FASTA = basename(marker_path),
+  FASTA_Header = marker_data$headers,
+  Detected_Accession = marker_header_ids,
+  FASTA_Duplicate = duplicated(marker_header_ids) |
+    duplicated(marker_header_ids, fromLast = TRUE),
+  stringsAsFactors = FALSE
+)
+marker_qc <- data.frame(
+  Reference_FASTA = basename(marker_path),
+  Marker = "polh_gran",
+  Sequence_Count = marker_data$sequence_count,
+  Unique_Header_Count = length(unique(marker_header_ids)),
+  Duplicate_Header_Record_Count = sum(duplicated(marker_header_ids)),
+  Invalid_Header_Count = sum(!marker_simple_header),
+  stringsAsFactors = FALSE
+)
+write.table(
+  marker_qc,
+  file.path(output_dir, "marker_fasta_validation.tsv"),
+  sep = "\t", quote = FALSE, row.names = FALSE, na = ""
+)
+```
+
+## Preparation of the nucleotide reference dataset
+
+At every render, the corresponding FASTA files in `alpha_beta/` and `gamma_delta/` are paired by their complete filenames and concatenated gene by gene. For example, `alpha_beta/02_pif4.fna` and `gamma_delta/02_pif4.fna` produce the generated file `nt/02_pif4.fna`. Within each generated file, all Alpha/Beta entries precede all Gamma/Delta entries. The directory `nt/` is therefore not an independent source dataset: it contains only generated FASTA files and is rebuilt from the current source files at every render.
+
+Before the generated files replace the previous generated collection, the workflow checks that the source filename lists agree, each source file is a valid nonempty FASTA file, and no duplicate headers occur within a source file or across a combined file. It then checks the generated file contents, entry ordering, and the equality of the combined sequence count to the sum of the two source counts. These checks validate the concatenation without changing headers or nucleotide sequences in either source directory.
+
+```{r}
+#| label: display-reference-preparation
+
+knitr::kable(
+  reference_counts,
+  format = "html",
+  col.names = c(
+    "Core gene",
+    "Alpha/Beta sequences",
+    "Gamma/Delta sequences",
+    "Total sequences"
+  ),
+  table.attr = 'class="table table-striped table-sm"'
+)
+```
+
+The processing order is: (1) read and validate the Alpha/Beta and Gamma/Delta source FASTA files, (2) concatenate matching core-gene files and validate the generated files in `nt/`, (3) read and validate the separate polh/gran marker file, (4) read the genome metadata, (5) perform the unchanged accession matching for the core records and the marker records, (6) construct the separate core-gene and three-gene presence representations, (7) calculate dataset eligibility and multiple-reference diagnostics, and (8) write the result and diagnostic tables.
+
+The metadata currently contain `{r} nrow(metadata)` accession records representing `{r} length(unique(metadata$genome_group_id))` unique `genome_group_id` values. The input collection currently contains `{r} length(fasta_files)` FASTA files representing `{r} length(gene_names)` core genes, with `{r} sum(fasta_qc$Sequence_Count)` sequence records in total. Each file contains `{r} paste(range(fasta_qc$Sequence_Count), collapse = "–")` sequences (minimum–maximum); these values are recalculated at every render.
+
+## Methods
+
+The metadata are imported as character columns to preserve accession strings and their version suffixes. The primary genome-level identifier is `genome_group_id`, which allows GenBank (`sourcedb == "insd"`) and RefSeq (`sourcedb == "refseq"`) records representing the same genome to be collapsed into one row in the presence matrix.
+
+FASTA identifiers are taken from the first whitespace-delimited token of each header. Accession strings are normalized for matching by removing only a terminal numeric version suffix (for example, `.1`); original values remain available for audit. Matching proceeds through three priority levels: primary `accession` and `accession_version`, explicit `refseq_relation`, then `secondary_accessions`. The first level containing metadata matches determines the result: one genome group is a unique match, while multiple groups at that level remain ambiguous. Lower-priority aliases cannot override that result and are documented when they point to competing groups.
+
+Multiple alias rows within one `genome_group_id` count as one candidate group. A key with no matches at any level is unmatched. Duplicate FASTA headers within a gene file and duplicate metadata accession values are separately counted and written to audit outputs.
+
+The presence matrix has one row per unique metadata genome group and one column per core gene. A value of 1 indicates that at least one uniquely assigned reference FASTA record was found for that genome and gene; 0 means only that this workflow did not uniquely assign a reference sequence. It does not establish biological absence. Ambiguous and unmatched records do not set presence to 1.
+
+```{r}
+#| label: build-accession-alias-map-and-genome-identifiers
+
+genome_ids <- sort(unique(metadata$genome_group_id))
+genes <- gene_names
+
+alias_rows <- list()
+add_alias <- function(value, alias_type, priority, metadata_accession, genome_id) {
+  if (is.na(value) || !nzchar(value)) {
+    return(NULL)
+  }
+  data.frame(
+    Original_Alias = value,
+    Normalized_Alias = sub("\\.[0-9]+$", "", value),
+    Alias_Type = alias_type,
+    Priority = priority,
+    Metadata_Accession = metadata_accession,
+    Genome_ID = genome_id,
+    stringsAsFactors = FALSE
+  )
+}
+
+for (i in seq_len(nrow(metadata))) {
+  accession <- metadata$accession[i]
+  genome_id <- metadata$genome_group_id[i]
+  current_rows <- list(
+    add_alias(accession, "accession", 1L, accession, genome_id),
+    add_alias(metadata$accession_version[i], "accession_version", 1L, accession, genome_id),
+    add_alias(metadata$refseq_relation[i], "refseq_relation", 2L, accession, genome_id)
+  )
+
+  if (!is.na(metadata$secondary_accessions[i]) &&
+      nzchar(metadata$secondary_accessions[i])) {
+    secondary <- strsplit(
+      metadata$secondary_accessions[i], ";", fixed = TRUE
+    )[[1]]
+    current_rows <- c(
+      current_rows,
+      lapply(secondary, add_alias,
+             alias_type = "secondary_accession",
+             priority = 3L,
+             metadata_accession = accession,
+             genome_id = genome_id)
+    )
+  }
+
+  current_rows <- Filter(Negate(is.null), current_rows)
+  alias_rows <- c(alias_rows, current_rows)
+}
+
+alias_map <- if (length(alias_rows) > 0L) {
+  unique(do.call(rbind, alias_rows))
+} else {
+  data.frame(
+    Original_Alias = character(), Normalized_Alias = character(),
+    Alias_Type = character(), Priority = integer(),
+    Metadata_Accession = character(), Genome_ID = character(),
+    stringsAsFactors = FALSE
+  )
+}
+alias_map <- alias_map[
+  !is.na(alias_map$Normalized_Alias) & nzchar(alias_map$Normalized_Alias),
+]
+aliases_by_key <- split(alias_map, alias_map$Normalized_Alias)
+
+metadata_values <- function(x) {
+  x <- unique(x[!is.na(x) & nzchar(x)])
+  paste(x, collapse = ";")
+}
+
+metadata_resolved_alias_rows <- lapply(names(aliases_by_key), function(key) {
+  key_aliases <- aliases_by_key[[key]]
+  selected_priority <- min(key_aliases$Priority)
+  selected_aliases <- key_aliases[
+    key_aliases$Priority == selected_priority, , drop = FALSE
+  ]
+  selected_groups <- sort(unique(selected_aliases$Genome_ID))
+  if (length(selected_groups) != 1L) return(NULL)
+
+  competing_aliases <- key_aliases[
+    key_aliases$Priority > selected_priority &
+      key_aliases$Genome_ID != selected_groups[1],
+    , drop = FALSE
+  ]
+  competing_groups <- sort(unique(competing_aliases$Genome_ID))
+  if (length(competing_groups) == 0L) return(NULL)
+
+  competing_origins <- vapply(competing_groups, function(candidate) {
+    candidate_aliases <- competing_aliases[
+      competing_aliases$Genome_ID == candidate, , drop = FALSE
+    ]
+    paste0(
+      candidate, " via ", metadata_values(candidate_aliases$Alias_Type),
+      " (metadata accession ", metadata_values(candidate_aliases$Metadata_Accession),
+      "; alias ", metadata_values(candidate_aliases$Original_Alias), ")"
+    )
+  }, character(1))
+
+  data.frame(
+    Normalized_Accession = key,
+    Assigned_Genome_ID = selected_groups[1],
+    Selected_Priority = selected_priority,
+    Competing_Genome_IDs = paste(competing_groups, collapse = ";"),
+    Competing_Assignment_Origins = paste(competing_origins, collapse = " | "),
+    stringsAsFactors = FALSE
+  )
+})
+metadata_resolved_alias_rows <- Filter(Negate(is.null), metadata_resolved_alias_rows)
+metadata_resolved_alias_conflicts <- if (length(metadata_resolved_alias_rows) > 0L) {
+  do.call(rbind, metadata_resolved_alias_rows)
+} else {
+  data.frame(
+    Normalized_Accession = character(), Assigned_Genome_ID = character(),
+    Selected_Priority = integer(), Competing_Genome_IDs = character(),
+    Competing_Assignment_Origins = character(), stringsAsFactors = FALSE
+  )
+}
+fasta_accession_keys <- unique(sub("\\.[0-9]+$", "", fasta_records$Detected_Accession))
+metadata_only_resolved_conflicts <- metadata_resolved_alias_conflicts[
+  !metadata_resolved_alias_conflicts$Normalized_Accession %in% fasta_accession_keys,
+  , drop = FALSE
+]
+metadata_only_conflict_text <- if (nrow(metadata_only_resolved_conflicts) > 0L) {
+  paste0(
+    metadata_only_resolved_conflicts$Normalized_Accession,
+    " → ", metadata_only_resolved_conflicts$Assigned_Genome_ID,
+    " (competing group(s): ", metadata_only_resolved_conflicts$Competing_Genome_IDs,
+    "; ", metadata_only_resolved_conflicts$Competing_Assignment_Origins, ")",
+    collapse = " | "
+  )
+} else {
+  "none"
+}
+
+genome_info <- lapply(genome_ids, function(genome_id) {
+  group_rows <- metadata[metadata$genome_group_id == genome_id, , drop = FALSE]
+  primary_rows <- if ("is_primary_in_genome_group" %in% names(group_rows)) {
+    group_rows[group_rows$is_primary_in_genome_group == "TRUE", , drop = FALSE]
+  } else {
+    group_rows[0, , drop = FALSE]
+  }
+  if (nrow(primary_rows) == 0L) primary_rows <- group_rows
+
+  genbank_rows <- group_rows[group_rows$sourcedb == "insd", , drop = FALSE]
+  refseq_rows <- group_rows[group_rows$sourcedb == "refseq", , drop = FALSE]
+  genbank_accessions <- if (nrow(genbank_rows) > 0L) {
+    metadata_values(genbank_rows$accession_version)
+  } else {
+    ""
+  }
+  refseq_accessions <- metadata_values(c(
+    refseq_rows$accession_version,
+    group_rows$refseq_relation
+  ))
+
+  data.frame(
+    Genome_ID = genome_id,
+    Organism = metadata_values(primary_rows$organism),
+    GenBank_Accession = genbank_accessions,
+    RefSeq_Accession = refseq_accessions,
+    stringsAsFactors = FALSE
+  )
+})
+genome_info <- do.call(rbind, genome_info)
+```
+
+```{r}
+#| label: match-fasta-accessions-to-genome-groups
+
+match_reference_records <- function(records) {
+  matched_rows <- vector("list", nrow(records))
+  selected_priorities <- integer(nrow(records))
+  for (i in seq_len(nrow(records))) {
+    record <- records[i, , drop = FALSE]
+    detected <- record$Detected_Accession
+    normalized <- sub("\\.[0-9]+$", "", detected)
+    key_aliases <- aliases_by_key[[normalized]]
+    selected_matches <- NULL
+
+    if (is.null(key_aliases)) {
+      candidate_groups <- character()
+      match_status <- "unmatched"
+      match_type <- "no_alias_match"
+      matched_aliases <- ""
+    } else {
+      for (priority in sort(unique(key_aliases$Priority))) {
+        priority_matches <- key_aliases[key_aliases$Priority == priority, , drop = FALSE]
+        if (nrow(priority_matches) > 0L) {
+          selected_matches <- priority_matches
+          selected_priorities[i] <- priority
+          break
+        }
+      }
+
+      if (is.null(selected_matches)) {
+        candidate_groups <- character()
+        match_status <- "unmatched"
+        match_type <- "no_alias_match"
+        matched_aliases <- ""
+      } else {
+        candidate_groups <- sort(unique(selected_matches$Genome_ID))
+        matched_aliases <- metadata_values(selected_matches$Original_Alias)
+        source_types <- metadata_values(selected_matches$Alias_Type)
+        comparison_type <- if (any(selected_matches$Original_Alias == detected)) {
+          "exact"
+        } else {
+          "version_normalized"
+        }
+        match_type <- paste(source_types, comparison_type, sep = "+")
+        match_status <- if (length(candidate_groups) == 1L) {
+          "matched_unique"
+        } else {
+          "ambiguous"
+        }
+      }
+    }
+
+    assigned_genome <- if (identical(match_status, "matched_unique")) {
+      candidate_groups[1]
+    } else {
+      ""
+    }
+    info <- if (nzchar(assigned_genome)) {
+      genome_info[match(assigned_genome, genome_info$Genome_ID), , drop = FALSE]
+    } else {
+      data.frame(
+        Genome_ID = "", Organism = "", GenBank_Accession = "",
+        RefSeq_Accession = "", stringsAsFactors = FALSE
+      )
+    }
+
+    matched_rows[[i]] <- data.frame(
+      Genome_ID = info$Genome_ID,
+      Organism = info$Organism,
+      GenBank_Accession = info$GenBank_Accession,
+      RefSeq_Accession = info$RefSeq_Accession,
+      Core_Gene = record$Core_Gene,
+      Reference_FASTA = record$Reference_FASTA,
+      FASTA_Header = record$FASTA_Header,
+      Detected_Accession = detected,
+      Match_Type = match_type,
+      Match_Status = match_status,
+      Candidate_Genome_IDs = paste(candidate_groups, collapse = ";"),
+      Matched_Metadata_Aliases = matched_aliases,
+      FASTA_Duplicate = record$FASTA_Duplicate,
+      stringsAsFactors = FALSE
+    )
+  }
+  list(
+    details = do.call(rbind, matched_rows),
+    selected_priorities = selected_priorities
+  )
+}
+
+core_matching <- match_reference_records(fasta_records)
+details <- core_matching$details
+selected_priorities <- core_matching$selected_priorities
+
+marker_matching <- match_reference_records(marker_records)
+marker_details <- marker_matching$details
+marker_selected_priorities <- marker_matching$selected_priorities
+```
+
+```{r}
+#| label: build-presence-matrix-and-summary
+
+presence <- matrix(
+  0L,
+  nrow = length(genome_ids),
+  ncol = length(genes),
+  dimnames = list(genome_ids, genes)
+)
+matched_details <- details[details$Match_Status == "matched_unique", , drop = FALSE]
+if (nrow(matched_details) > 0L) {
+  presence[cbind(
+    match(matched_details$Genome_ID, genome_ids),
+    match(matched_details$Core_Gene, genes)
+  )] <- 1L
+}
+
+presence_matrix <- data.frame(
+  Genome_ID = genome_info$Genome_ID,
+  Organism = genome_info$Organism,
+  GenBank_Accession = genome_info$GenBank_Accession,
+  RefSeq_Accession = genome_info$RefSeq_Accession,
+  presence,
+  check.names = FALSE,
+  stringsAsFactors = FALSE
+)
+
+gene_counts <- rowSums(presence)
+no_match_indices <- which(gene_counts == 0L)
+genomes_without_matches <- data.frame(
+  genome_group_id = genome_info$Genome_ID[no_match_indices],
+  `Virusname / Organism` = genome_info$Organism[no_match_indices],
+  `GenBank-Accession(s)` = genome_info$GenBank_Accession[no_match_indices],
+  `RefSeq-Accession(s)` = genome_info$RefSeq_Accession[no_match_indices],
+  `Number of uniquely assigned core genes` = as.integer(gene_counts[no_match_indices]),
+  check.names = FALSE,
+  stringsAsFactors = FALSE
+)
+
+normalized_gene_names <- tolower(gsub("[-_]", "", genes))
+lef8_indices <- which(normalized_gene_names == "lef8")
+lef9_indices <- which(normalized_gene_names == "lef9")
+if (length(lef8_indices) != 1L || length(lef9_indices) != 1L) {
+  stop(
+    "The existing core-gene collection must contain exactly one lef-8/lef8 and one lef-9/lef9 gene.",
+    call. = FALSE
+  )
+}
+lef8_gene <- genes[lef8_indices]
+lef9_gene <- genes[lef9_indices]
+
+marker_presence <- matrix(
+  0L,
+  nrow = length(genome_ids),
+  ncol = 3L,
+  dimnames = list(genome_ids, c("polh_gran", "lef8", "lef9"))
+)
+matched_marker_details <- marker_details[
+  marker_details$Match_Status == "matched_unique", , drop = FALSE
+]
+if (nrow(matched_marker_details) > 0L) {
+  marker_presence[cbind(
+    match(matched_marker_details$Genome_ID, genome_ids),
+    match(matched_marker_details$Core_Gene, colnames(marker_presence))
+  )] <- 1L
+}
+marker_presence[, "lef8"] <- presence[, lef8_gene]
+marker_presence[, "lef9"] <- presence[, lef9_gene]
+marker_gene_presence_matrix <- data.frame(
+  genome_group_id = genome_ids,
+  marker_presence,
+  check.names = FALSE,
+  stringsAsFactors = FALSE
+)
+
+cuni_core_rows <- details[
+  sub("\\.[0-9]+$", "", details$Detected_Accession) == "AF403738" &
+    details$Match_Status == "matched_unique" & nzchar(details$Genome_ID),
+  , drop = FALSE
+]
+cuni_groups <- sort(unique(cuni_core_rows$Genome_ID))
+cuni_group_id <- if (length(cuni_groups) == 1L) cuni_groups[1] else NA_character_
+cuni_group_index <- if (!is.na(cuni_group_id)) match(cuni_group_id, genome_ids) else integer()
+cuni_polh_present <- length(cuni_group_index) == 1L && marker_presence[cuni_group_index, "polh_gran"] == 1L
+cuni_lef8_present <- length(cuni_group_index) == 1L && marker_presence[cuni_group_index, "lef8"] == 1L
+cuni_lef9_present <- length(cuni_group_index) == 1L && marker_presence[cuni_group_index, "lef9"] == 1L
+cuni_exception_valid <- length(cuni_group_index) == 1L &&
+  !cuni_polh_present && cuni_lef8_present && cuni_lef9_present
+
+three_gene_count <- rowSums(marker_presence)
+three_gene_complete <- three_gene_count == ncol(marker_presence)
+three_gene_eligible <- three_gene_complete
+if (cuni_exception_valid) three_gene_eligible[cuni_group_index] <- TRUE
+eligibility_reason <- ifelse(
+  three_gene_complete,
+  "complete_three_gene_reference",
+  ifelse(
+    !is.na(cuni_group_id) & genome_ids == cuni_group_id & cuni_exception_valid,
+    "cuni_exception_two_genes",
+    "incomplete_marker_reference"
+  )
+)
+dataset_eligibility <- data.frame(
+  genome_group_id = genome_ids,
+  core_gene_count = as.integer(gene_counts),
+  core_gene_total = length(genes),
+  core_38_complete = gene_counts == length(genes),
+  polh_gran = as.integer(marker_presence[, "polh_gran"]),
+  lef8 = as.integer(marker_presence[, "lef8"]),
+  lef9 = as.integer(marker_presence[, "lef9"]),
+  three_gene_count = as.integer(three_gene_count),
+  three_gene_complete = three_gene_complete,
+  three_gene_eligible = three_gene_eligible,
+  eligibility_reason = eligibility_reason,
+  stringsAsFactors = FALSE
+)
+
+empty_multiple_reference_sequences <- function() {
+  data.frame(
+    genome_group_id = character(), Core_Gene = character(),
+    Reference_FASTA = character(), Reference_Count = integer(),
+    FASTA_Accessions = character(), stringsAsFactors = FALSE
+  )
+}
+find_multiple_reference_sequences <- function(reference_details) {
+  matched <- reference_details[
+    reference_details$Match_Status == "matched_unique", , drop = FALSE
+  ]
+  if (nrow(matched) == 0L) return(empty_multiple_reference_sequences())
+  keys <- interaction(matched$Genome_ID, matched$Core_Gene, drop = TRUE, lex.order = TRUE)
+  groups <- split(seq_len(nrow(matched)), keys)
+  groups <- groups[lengths(groups) > 1L]
+  if (length(groups) == 0L) return(empty_multiple_reference_sequences())
+  do.call(rbind, lapply(groups, function(indices) {
+    rows <- matched[indices, , drop = FALSE]
+    data.frame(
+      genome_group_id = rows$Genome_ID[1],
+      Core_Gene = rows$Core_Gene[1],
+      Reference_FASTA = paste(unique(rows$Reference_FASTA), collapse = ";"),
+      Reference_Count = nrow(rows),
+      FASTA_Accessions = paste(unique(rows$Detected_Accession), collapse = ";"),
+      stringsAsFactors = FALSE
+    )
+  }))
+}
+multiple_reference_sequences <- rbind(
+  find_multiple_reference_sequences(details),
+  find_multiple_reference_sequences(marker_details)
+)
+
+cuni_validation <- data.frame(
+  FASTA_Accession = "AF403738",
+  Genome_Group_ID = ifelse(is.na(cuni_group_id), "none", cuni_group_id),
+  polh_gran_reference_present = as.integer(cuni_polh_present),
+  lef8_reference_present = as.integer(cuni_lef8_present),
+  lef9_reference_present = as.integer(cuni_lef9_present),
+  three_gene_complete = if (length(cuni_group_index) == 1L) three_gene_complete[cuni_group_index] else FALSE,
+  three_gene_eligible = if (length(cuni_group_index) == 1L) three_gene_eligible[cuni_group_index] else FALSE,
+  eligibility_reason = if (length(cuni_group_index) == 1L) eligibility_reason[cuni_group_index] else "cuni_group_not_uniquely_matched",
+  stringsAsFactors = FALSE
+)
+
+priority_labels <- c(
+  "primary accession/accession_version",
+  "refseq_relation",
+  "secondary_accessions"
+)
+ambiguous_indices <- which(details$Match_Status == "ambiguous")
+ambiguous_details <- details[ambiguous_indices, , drop = FALSE]
+metadata_field_names <- c(
+  accession = "accession",
+  accession_version = "accession_version",
+  refseq_relation = "refseq_relation",
+  secondary_accession = "secondary_accessions"
+)
+ambiguous_fasta_rows <- lapply(seq_len(nrow(ambiguous_details)), function(i) {
+  record <- ambiguous_details[i, , drop = FALSE]
+  record_priority <- selected_priorities[ambiguous_indices[i]]
+  record_stage <- priority_labels[record_priority]
+  key <- sub("\\.[0-9]+$", "", record$Detected_Accession)
+  key_aliases <- aliases_by_key[[key]]
+  key_aliases <- key_aliases[key_aliases$Priority == record_priority, , drop = FALSE]
+  candidates <- sort(unique(key_aliases$Genome_ID))
+  candidate_descriptions <- vapply(candidates, function(candidate) {
+    candidate_aliases <- key_aliases[key_aliases$Genome_ID == candidate, , drop = FALSE]
+    candidate_info <- genome_info[match(candidate, genome_info$Genome_ID), , drop = FALSE]
+    fields <- unname(metadata_field_names[unique(candidate_aliases$Alias_Type)])
+    fields <- fields[!is.na(fields)]
+    paste0(
+      candidate, " [", candidate_info$Organism, "] via ",
+      paste(fields, collapse = ", "), " (",
+      metadata_values(candidate_aliases$Original_Alias), ")"
+    )
+  }, character(1))
+
+  data.frame(
+    `Core gene` = record$Core_Gene,
+    `FASTA filename` = record$Reference_FASTA,
+    `FASTA accession` = record$Detected_Accession,
+    `Normalized accession key` = key,
+    `Matching priority` = record_stage,
+    `Possible genome_group_ids` = paste(candidates, collapse = ";"),
+    `Associated virus names` = metadata_values(vapply(candidates, function(candidate) {
+      genome_info$Organism[match(candidate, genome_info$Genome_ID)]
+    }, character(1))),
+    `Metadata fields` = metadata_values(unname(metadata_field_names[
+      unique(key_aliases$Alias_Type)
+    ])),
+    `Competing mappings` = paste(candidate_descriptions, collapse = " | "),
+    `Reason for ambiguity` = paste0(
+      "At the ", record_stage,
+      " priority, normalized accession key ", key,
+      " is associated with multiple genome_group_id values."
+    ),
+    check.names = FALSE,
+    stringsAsFactors = FALSE
+  )
+})
+ambiguous_fasta_records <- if (length(ambiguous_fasta_rows) > 0L) {
+  do.call(rbind, ambiguous_fasta_rows)
+} else {
+  data.frame(
+    `Core gene` = character(), `FASTA filename` = character(),
+    `FASTA accession` = character(), `Normalized accession key` = character(),
+    `Matching priority` = character(),
+    `Possible genome_group_ids` = character(), `Associated virus names` = character(),
+    `Metadata fields` = character(), `Competing mappings` = character(),
+    `Reason for ambiguity` = character(), check.names = FALSE,
+    stringsAsFactors = FALSE
+  )
+}
+
+match_category_counts <- c(
+  matched_unique = sum(details$Match_Status == "matched_unique"),
+  ambiguous = sum(details$Match_Status == "ambiguous"),
+  unmatched = sum(details$Match_Status == "unmatched")
+)
+if (sum(match_category_counts) != nrow(fasta_records)) {
+  stop("Quality check failed: FASTA records do not partition into match categories.", call. = FALSE)
+}
+if (nrow(ambiguous_fasta_records) != match_category_counts[["ambiguous"]]) {
+  stop("Quality check failed: ambiguous FASTA detail table count does not match classifications.", call. = FALSE)
+}
+ambiguous_keys <- unique(sub(
+  "\\.[0-9]+$", "", details$Detected_Accession[ambiguous_indices]
+))
+
+summary <- data.frame(
+  metadata_accession_records = nrow(metadata),
+  genomes_in_metadata = length(genome_ids),
+  core_genes_examined = length(genes),
+  genomes_with_all_core_genes = sum(gene_counts == length(genes)),
+  genomes_with_at_least_one_core_gene = sum(gene_counts > 0L),
+  genomes_with_partial_core_gene_set = sum(gene_counts > 0L & gene_counts < length(genes)),
+  genomes_without_reference_hits = sum(gene_counts == 0L),
+  ambiguous_accession_assignments = length(intersect(
+    ambiguous_keys,
+    unique(sub("\\.[0-9]+$", "", fasta_records$Detected_Accession))
+  )),
+  ambiguous_fasta_gene_records = sum(details$Match_Status == "ambiguous"),
+  unmatched_fasta_gene_records = sum(details$Match_Status == "unmatched"),
+  duplicate_fasta_header_records = sum(fasta_qc$Duplicate_Header_Record_Count),
+  duplicate_metadata_accession_values = sum(duplicated(metadata$accession)),
+  stringsAsFactors = FALSE
+)
+
+ambiguous_summary <- c(
+  distinct_accessions = length(unique(
+    ambiguous_fasta_records[["Normalized accession key"]]
+  )),
+  core_genes = length(unique(
+    ambiguous_fasta_records[["Core gene"]]
+  )),
+  genome_groups = length(unique(unlist(strsplit(
+    ambiguous_fasta_records[["Possible genome_group_ids"]], ";", fixed = TRUE
+  ))))
+)
+if (summary$ambiguous_accession_assignments != ambiguous_summary[["distinct_accessions"]]) {
+  stop("Quality check failed: ambiguous accession totals do not agree.", call. = FALSE)
+}
+if (nrow(genomes_without_matches) != summary$genomes_without_reference_hits) {
+  stop("Quality check failed: no-match table does not agree with genome summary.", call. = FALSE)
+}
+
+duplicate_metadata_accessions <- unique(metadata$accession[
+  duplicated(metadata$accession) | duplicated(metadata$accession, fromLast = TRUE)
+])
+metadata_duplicates <- if (length(duplicate_metadata_accessions) > 0L) {
+  do.call(rbind, lapply(duplicate_metadata_accessions, function(value) {
+    rows <- metadata[metadata$accession == value, , drop = FALSE]
+    data.frame(
+      Accession = value,
+      Genome_IDs = metadata_values(rows$genome_group_id),
+      Sources = metadata_values(rows$sourcedb),
+      Record_Count = nrow(rows),
+      stringsAsFactors = FALSE
+    )
+  }))
+} else {
+  data.frame(
+    Accession = character(), Genome_IDs = character(), Sources = character(),
+    Record_Count = integer(), stringsAsFactors = FALSE
+  )
+}
+
+ambiguity_rows <- list()
+for (key in ambiguous_keys) {
+  record_index <- ambiguous_indices[which(sub(
+    "\\.[0-9]+$", "", details$Detected_Accession[ambiguous_indices]
+  ) == key)[1]]
+  key_rows <- aliases_by_key[[key]]
+  key_rows <- key_rows[key_rows$Priority == selected_priorities[record_index], , drop = FALSE]
+  for (candidate in sort(unique(key_rows$Genome_ID))) {
+    candidate_rows <- key_rows[key_rows$Genome_ID == candidate, , drop = FALSE]
+    ambiguity_rows[[length(ambiguity_rows) + 1L]] <- data.frame(
+      Normalized_Accession = key,
+      Candidate_Genome_ID = candidate,
+      Metadata_Accessions = metadata_values(candidate_rows$Metadata_Accession),
+      Alias_Forms = metadata_values(candidate_rows$Original_Alias),
+      Alias_Types = metadata_values(candidate_rows$Alias_Type),
+      Observed_In_FASTA = TRUE,
+      stringsAsFactors = FALSE
+    )
+  }
+}
+ambiguities <- if (length(ambiguity_rows) > 0L) {
+  do.call(rbind, ambiguity_rows)
+} else {
+  data.frame(
+    Normalized_Accession = character(), Candidate_Genome_ID = character(),
+    Metadata_Accessions = character(), Alias_Forms = character(),
+    Alias_Types = character(), Observed_In_FASTA = logical(),
+    stringsAsFactors = FALSE
+  )
+}
+
+resolved_conflict_rows <- list()
+for (record_index in which(details$Match_Status == "matched_unique")) {
+  key <- sub("\\.[0-9]+$", "", details$Detected_Accession[record_index])
+  assigned_group <- details$Genome_ID[record_index]
+  key_aliases <- aliases_by_key[[key]]
+  competing_aliases <- key_aliases[
+    key_aliases$Priority > selected_priorities[record_index] &
+      key_aliases$Genome_ID != assigned_group,
+    , drop = FALSE
+  ]
+  competing_groups <- sort(unique(competing_aliases$Genome_ID))
+  if (length(competing_groups) == 0L) next
+
+  competing_origins <- vapply(competing_groups, function(candidate) {
+    candidate_aliases <- competing_aliases[
+      competing_aliases$Genome_ID == candidate, , drop = FALSE
+    ]
+    paste0(
+      candidate, " via ", metadata_values(candidate_aliases$Alias_Type),
+      " (metadata accession ", metadata_values(candidate_aliases$Metadata_Accession),
+      "; alias ", metadata_values(candidate_aliases$Original_Alias), ")"
+    )
+  }, character(1))
+
+  resolved_conflict_rows[[length(resolved_conflict_rows) + 1L]] <- data.frame(
+    Core_Gene = details$Core_Gene[record_index],
+    Reference_FASTA = details$Reference_FASTA[record_index],
+    FASTA_Accession = details$Detected_Accession[record_index],
+    Normalized_Accession = key,
+    Assigned_Genome_ID = assigned_group,
+    Matching_Method = paste(
+      priority_labels[selected_priorities[record_index]],
+      sub("^.*\\+", "", details$Match_Type[record_index]),
+      sep = "; "
+    ),
+    Selected_Priority = priority_labels[selected_priorities[record_index]],
+    Selected_Metadata_Aliases = details$Matched_Metadata_Aliases[record_index],
+    Competing_Genome_IDs = paste(competing_groups, collapse = ";"),
+    Competing_Assignment_Origins = paste(competing_origins, collapse = " | "),
+    stringsAsFactors = FALSE
+  )
+}
+resolved_accession_conflicts <- if (length(resolved_conflict_rows) > 0L) {
+  do.call(rbind, resolved_conflict_rows)
+} else {
+  data.frame(
+    Core_Gene = character(), Reference_FASTA = character(),
+    FASTA_Accession = character(), Normalized_Accession = character(),
+    Assigned_Genome_ID = character(), Matching_Method = character(),
+    Selected_Priority = character(), Selected_Metadata_Aliases = character(),
+    Competing_Genome_IDs = character(), Competing_Assignment_Origins = character(),
+    stringsAsFactors = FALSE
+  )
+}
+
+resolved_summary <- c(
+  fasta_records = nrow(resolved_accession_conflicts),
+  distinct_accessions = length(unique(resolved_accession_conflicts$Normalized_Accession))
+)
+resolved_accession_keys <- sort(unique(resolved_accession_conflicts$Normalized_Accession))
+other_resolved_accession_keys <- setdiff(resolved_accession_keys, "NC_004323")
+
+nc004323_indices <- which(sub(
+  "\\.[0-9]+$", "", details$Detected_Accession
+) == "NC_004323")
+if (length(nc004323_indices) == 0L) {
+  nc004323_validation_message <- "NC_004323 was not present in the current FASTA collection."
+} else {
+  nc004323_is_assigned <- all(
+    details$Match_Status[nc004323_indices] == "matched_unique" &
+      details$Genome_ID[nc004323_indices] == "AY145471"
+  )
+  nc004323_history_is_documented <- any(
+    resolved_accession_conflicts$Normalized_Accession == "NC_004323" &
+      grepl(
+        "L22858 via secondary_accession",
+        resolved_accession_conflicts$Competing_Assignment_Origins,
+        fixed = TRUE
+      )
+  )
+  if (!nc004323_is_assigned || !nc004323_history_is_documented) {
+    stop(
+      "NC_004323 validation failed: expected a unique AY145471 match and documented L22858 secondary-accession history.",
+      call. = FALSE
+    )
+  }
+  nc004323_validation_message <- paste0(
+    "passed: all ", length(nc004323_indices),
+    " FASTA record(s) were uniquely assigned to AY145471; the L22858 secondary_accession relationship is documented."
+  )
+}
+
+reference_genome_targets <- c(
+  CuniNPV = "AF403738",
+  NeabNPV = "DQ317692",
+  NeleNPV = "AY349019",
+  NeseNPV = "AY430810"
+)
+reference_genome_validation <- do.call(rbind, lapply(names(reference_genome_targets), function(virus) {
+  accession <- reference_genome_targets[[virus]]
+  rows <- details[sub("\\.[0-9]+$", "", details$Detected_Accession) == accession, , drop = FALSE]
+  matched_rows <- rows[rows$Match_Status == "matched_unique" & nzchar(rows$Genome_ID), , drop = FALSE]
+  genome_groups <- sort(unique(matched_rows$Genome_ID))
+  candidate_groups <- sort(unique(unlist(strsplit(
+    rows$Candidate_Genome_IDs[nzchar(rows$Candidate_Genome_IDs)], ";", fixed = TRUE
+  ))))
+  if (length(genome_groups) == 0L) genome_groups <- candidate_groups
+  statuses <- if (nrow(rows) == 0L) "not observed" else paste(sort(unique(rows$Match_Status)), collapse = ", ")
+  data.frame(
+    Virus = virus,
+    `FASTA accession` = accession,
+    `Genome group ID` = if (length(genome_groups)) paste(genome_groups, collapse = ";") else "none",
+    `Core genes represented` = length(unique(rows$Core_Gene)),
+    `Uniquely matched core genes` = length(unique(matched_rows$Core_Gene)),
+    `Matching status` = statuses,
+    check.names = FALSE,
+    stringsAsFactors = FALSE
+  )
+}))
+```
+
+The existing audit exports retain their filenames and table structures. Additional complete tables document genome groups without unique reference matches, truly ambiguous FASTA records, and resolved cross-priority accession conflicts; all outputs are written to `results/accession_matching/`.
+
+```{r}
+#| label: write-tsv-results-and-audit-log
+
+write_tsv <- function(x, filename) {
+  write.table(
+    x,
+    file.path(output_dir, filename),
+    sep = "\t", quote = FALSE, row.names = FALSE, na = ""
+  )
+}
+
+write_tsv(summary, "accession_matching_summary.tsv")
+write_tsv(presence_matrix, "core_gene_presence_matrix.tsv")
+write_tsv(details, "accession_matching_details.tsv")
+write_tsv(marker_details, "marker_accession_matching_details.tsv")
+write_tsv(ambiguities, "accession_ambiguities.tsv")
+write_tsv(marker_gene_presence_matrix, "marker_gene_presence_matrix.tsv")
+write_tsv(dataset_eligibility, "dataset_eligibility.tsv")
+write_tsv(multiple_reference_sequences, "multiple_reference_sequences.tsv")
+write_tsv(cuni_validation, "cuni_validation.tsv")
+write_tsv(genomes_without_matches, "genomes_without_matches.tsv")
+write_tsv(ambiguous_fasta_records, "ambiguous_fasta_records.tsv")
+write_tsv(resolved_accession_conflicts, "resolved_accession_conflicts.tsv")
+write_tsv(reference_genome_validation, "reference_genome_validation.tsv")
+write_tsv(metadata_duplicates, "metadata_duplicate_accessions.tsv")
+write_tsv(
+  details[details$Match_Status != "matched_unique" | details$FASTA_Duplicate, , drop = FALSE],
+  "matching_issues.tsv"
+)
+
+log_lines <- c(
+  "Accession matching completed.",
+  paste("Metadata accession records:", nrow(metadata)),
+  paste("Unique genome groups:", length(genome_ids)),
+  paste("Nucleotide FASTA files:", length(fasta_files)),
+  paste("FASTA records:", nrow(fasta_records)),
+  paste("polh/gran marker records:", nrow(marker_records)),
+  paste("Uniquely matched polh/gran records:", sum(marker_details$Match_Status == "matched_unique")),
+  paste("Ambiguous polh/gran records:", sum(marker_details$Match_Status == "ambiguous")),
+  paste("Unmatched polh/gran records:", sum(marker_details$Match_Status == "unmatched")),
+  paste("Complete core-gene genome groups:", sum(dataset_eligibility$core_38_complete)),
+  paste("Complete three-gene genome groups:", sum(dataset_eligibility$three_gene_complete)),
+  paste("Three-gene eligible genome groups:", sum(dataset_eligibility$three_gene_eligible)),
+  paste("Multiple reference combinations:", nrow(multiple_reference_sequences)),
+  paste("Ambiguous normalized FASTA accessions:", length(ambiguous_keys)),
+  paste(
+    "Resolved cross-priority accession conflicts:",
+    resolved_summary[["distinct_accessions"]]
+  ),
+  paste("Unmatched FASTA gene records:", sum(details$Match_Status == "unmatched")),
+  paste("Duplicate FASTA header records:", sum(fasta_qc$Duplicate_Header_Record_Count))
+)
+writeLines(log_lines, file.path(output_dir, "accession_matching_log.txt"))
+```
+
+## Results
+
+The analysis summary below is calculated from the current metadata and FASTA inputs. “Partial” means at least one but fewer than all `{r} length(genes)` currently identified core-gene reference sequences; genomes with zero hits are reported separately. For ambiguous matches, the report distinguishes FASTA-record occurrences, distinct normalized accession keys, affected core genes, and candidate genome groups.
+
+```{r}
+#| label: display-accession-matching-summary
+
+summary_display <- data.frame(
+  Metric = c(
+    "Metadata accession records",
+    "Unique genomes (genome_group_id)",
+    "Core genes examined",
+    "Genomes with all core genes",
+    "Genomes with at least one reference hit",
+    "Genomes with a partial core-gene set",
+    "Genomes without reference hits",
+    "Distinct ambiguous FASTA accessions (normalized keys)",
+    "Ambiguous FASTA gene records",
+    "Core genes with ambiguous FASTA records",
+    "Genome groups represented by ambiguous FASTA records",
+    "FASTA records with resolved cross-priority conflicts",
+    "Distinct accessions with resolved cross-priority conflicts",
+    "Unmatched FASTA gene records",
+    "Duplicate FASTA header records",
+    "Duplicate metadata accession values"
+  ),
+  Value = as.character(c(
+    summary$metadata_accession_records,
+    summary$genomes_in_metadata,
+    summary$core_genes_examined,
+    summary$genomes_with_all_core_genes,
+    summary$genomes_with_at_least_one_core_gene,
+    summary$genomes_with_partial_core_gene_set,
+    summary$genomes_without_reference_hits,
+    summary$ambiguous_accession_assignments,
+    summary$ambiguous_fasta_gene_records,
+    ambiguous_summary[["core_genes"]],
+    ambiguous_summary[["genome_groups"]],
+    resolved_summary[["fasta_records"]],
+    resolved_summary[["distinct_accessions"]],
+    summary$unmatched_fasta_gene_records,
+    summary$duplicate_fasta_header_records,
+    summary$duplicate_metadata_accession_values
+  )),
+  stringsAsFactors = FALSE
+)
+knitr::kable(
+  summary_display,
+  format = "html",
+  col.names = c("Measure", "Count"),
+  table.attr = 'class="table table-striped table-sm"'
+)
+```
+
+### Validation of the Gamma/Delta reference genomes
+
+The four accessions introduced with the Gamma/Delta reference collection are checked against the generated FASTA records and the current genome metadata. The table reports how many core-gene files contain each accession, which genome group(s) were identified by the existing matching hierarchy, how many of those records were uniquely matched, and the resulting matching status. The values are calculated from the current detail table rather than assumed from the source collection.
+
+```{r}
+#| label: display-reference-genome-validation
+
+knitr::kable(
+  reference_genome_validation,
+  format = "html",
+  col.names = c(
+    "Virus",
+    "FASTA accession",
+    "Genome group ID",
+    "Core genes represented",
+    "Uniquely matched core genes",
+    "Matching status"
+  ),
+  table.attr = 'class="table table-striped table-sm"'
+)
+```
+
+### polh/gran marker accession matching
+
+The separate polh/gran marker file is matched using the same accession hierarchy as the 38 core genes. It remains outside the core-gene records and therefore does not add a column to the core-gene presence matrix.
+
+```{r}
+#| label: display-marker-accession-summary
+
+marker_matching_summary <- data.frame(
+  Metric = c(
+    "polh/gran reference sequences",
+    "Uniquely matched",
+    "Ambiguous",
+    "Unmatched"
+  ),
+  Count = c(
+    nrow(marker_records),
+    sum(marker_details$Match_Status == "matched_unique"),
+    sum(marker_details$Match_Status == "ambiguous"),
+    sum(marker_details$Match_Status == "unmatched")
+  ),
+  stringsAsFactors = FALSE
+)
+knitr::kable(
+  marker_matching_summary,
+  format = "html",
+  col.names = c("Measure", "Count"),
+  table.attr = 'class="table table-striped table-sm"'
+)
+```
+
+### Dataset completeness and eligibility
+
+The core-gene and three-gene datasets are evaluated separately. A value of zero in either presence representation means that no uniquely matched reference record was identified in the current accession-based workflow; it is not evidence that the gene is biologically absent. The `cuni_exception_two_genes` category is restricted to the uniquely identified genome group for AF403738 and does not create a polh/gran sequence.
+
+```{r}
+#| label: display-dataset-completeness
+
+dataset_completeness_summary <- data.frame(
+  Metric = c(
+    "Genome groups",
+    "Complete core-gene reference",
+    "Complete three-gene reference",
+    "Eligible for three-gene analysis",
+    "CuniNPV exception eligibility"
+  ),
+  Count = c(
+    nrow(dataset_eligibility),
+    sum(dataset_eligibility$core_38_complete),
+    sum(dataset_eligibility$three_gene_complete),
+    sum(dataset_eligibility$three_gene_eligible),
+    sum(dataset_eligibility$eligibility_reason == "cuni_exception_two_genes")
+  ),
+  stringsAsFactors = FALSE
+)
+knitr::kable(
+  dataset_completeness_summary,
+  format = "html",
+  col.names = c("Measure", "Count"),
+  table.attr = 'class="table table-striped table-sm"'
+)
+```
+
+### CuniNPV validation
+
+CuniNPV is represented by AF403738. Its exception is accepted only when AF403738 maps uniquely to one genome group, that group has uniquely matched lef-8 and lef-9 references, and no uniquely matched polh/gran reference is present. The missing polh/gran partition is not filled in this analysis; downstream gap handling belongs to `02_sequence_alignment.qmd`.
+
+```{r}
+#| label: display-cuni-validation
+
+knitr::kable(
+  cuni_validation,
+  format = "html",
+  col.names = c(
+    "FASTA accession",
+    "Genome group ID",
+    "polh/gran reference present",
+    "lef8 reference present",
+    "lef9 reference present",
+    "Three-gene complete",
+    "Three-gene eligible",
+    "Eligibility reason"
+  ),
+  table.attr = 'class="table table-striped table-sm"'
+)
+```
+
+### Multiple reference sequences
+
+The following table documents genome-group/core-gene combinations represented by more than one uniquely matched FASTA record. These records are retained and are not automatically selected or removed; the table is intended for downstream alignment decisions.
+
+```{r}
+#| label: display-multiple-reference-sequences
+
+if (nrow(multiple_reference_sequences) == 0L) {
+  knitr::asis_output("No genome-group/gene combinations had multiple uniquely matched reference sequences.")
+} else {
+  knitr::kable(
+    multiple_reference_sequences,
+    format = "html",
+    table.attr = 'class="table table-striped table-sm"'
+  )
+}
+```
+
+The per-gene table reports the number of unique genome groups with an accession-linked reference sequence for each core gene. The full genome-by-gene matrix remains available as a TSV rather than being expanded in this report.
+
+```{r}
+#| label: display-core-gene-coverage
+
+coverage_by_gene <- data.frame(
+  Core_Gene = genes,
+  Genomes_with_reference_sequence = as.integer(colSums(presence)),
+  Total_genomes = nrow(presence),
+  stringsAsFactors = FALSE
+)
+knitr::kable(
+  coverage_by_gene,
+  format = "html",
+  col.names = c("Core gene", "Genomes with reference sequence", "Metadata genomes"),
+  table.attr = 'class="table table-striped table-sm"'
+)
+```
+
+### Genome groups without reference matches
+
+The table lists every genome group with zero uniquely assigned core-gene reference sequences. A missing reference match is a limitation of accession-based identification and is **not evidence that a core gene is biologically absent**. The same complete table is exported to `results/accession_matching/genomes_without_matches.tsv`.
+
+```{r}
+#| label: display-genomes-without-reference-matches
+
+if (nrow(genomes_without_matches) == 0L) {
+  knitr::asis_output("No genome groups without reference matches were identified.")
+} else {
+  knitr::kable(
+    genomes_without_matches,
+    format = "html",
+    table.attr = 'class="table table-striped table-sm"'
+  )
+}
+```
+
+### Ambiguous FASTA records
+
+An ambiguous FASTA record is one whose normalized accession key maps to more than one `genome_group_id` in the current metadata. Counts below distinguish FASTA-record occurrences, distinct normalized accession keys, affected core genes, and candidate genome groups. The competing mappings and metadata fields shown in the table are derived from the alias rows that actually matched each key; no candidate is selected. The complete table is also exported to `results/accession_matching/ambiguous_fasta_records.tsv`.
+
+```{r}
+#| label: display-ambiguous-fasta-records
+
+if (nrow(ambiguous_fasta_records) == 0L) {
+  knitr::asis_output("No ambiguous FASTA records were identified.")
+} else {
+  knitr::kable(
+    ambiguous_fasta_records,
+    format = "html",
+    col.names = names(ambiguous_fasta_records),
+    table.attr = 'class="table table-striped table-sm"'
+  )
+}
+```
+
+### Resolved accession conflicts
+
+These FASTA records had lower-priority metadata aliases pointing to other genome groups, but the higher-priority evidence produced a unique assignment. The competing groups and the exact metadata fields and records supplying those aliases are shown for audit. The number of rows counts FASTA-record occurrences; the summary separately reports distinct normalized accession keys. This complete table is exported to `results/accession_matching/resolved_accession_conflicts.tsv`.
+
+The explicit `NC_004323` validation {r} nc004323_validation_message Other observed FASTA accessions with resolved lower-priority cross-group aliases: `{r} if (length(other_resolved_accession_keys) > 0L) paste(other_resolved_accession_keys, collapse = ", ") else "none"`. A metadata-wide scan also found `{r} nrow(metadata_only_resolved_conflicts)` priority-resolved cross-group key(s) with no FASTA record: `{r} metadata_only_conflict_text`.
+
+```{r}
+#| label: display-resolved-accession-conflicts
+
+if (nrow(resolved_accession_conflicts) == 0L) {
+  knitr::asis_output("No resolved cross-priority accession conflicts were identified.")
+} else {
+  knitr::kable(
+    resolved_accession_conflicts,
+    format = "html",
+    table.attr = 'class="table table-striped table-sm"'
+  )
+}
+```
+
+The accession ambiguities observed among the FASTA headers are shown below. No candidate group is selected for an ambiguous accession.
+
+```{r}
+#| label: display-observed-accession-ambiguities
+
+observed_ambiguities <- ambiguities[
+  ambiguities$Observed_In_FASTA,
+  c("Normalized_Accession", "Candidate_Genome_ID", "Metadata_Accessions", "Alias_Types"),
+  drop = FALSE
+]
+observed_ambiguous_accession_text <- if (nrow(observed_ambiguities) > 0L) {
+  paste(unique(observed_ambiguities$Normalized_Accession), collapse = ", ")
+} else {
+  "none"
+}
+knitr::kable(
+  observed_ambiguities,
+  format = "html",
+  col.names = c("Accession key", "Candidate genome group", "Metadata accessions", "Alias sources"),
+  table.attr = 'class="table table-striped table-sm"'
+)
+```
+
+## Discussion
+
+The results quantify accession-linked reference coverage in this collection. `{r} summary$genomes_with_all_core_genes` of `{r} summary$genomes_in_metadata` genome groups have a uniquely assigned reference record for every one of the `{r} summary$core_genes_examined` currently identified core genes. `{r} summary$genomes_with_partial_core_gene_set` groups have partial coverage, and `{r} summary$genomes_without_reference_hits` groups have no identified reference hit. The FASTA collection contains `{r} summary$ambiguous_accession_assignments` distinct ambiguous normalized accession key(s), represented by `{r} summary$ambiguous_fasta_gene_records` FASTA-record occurrence(s); these remain documented as ambiguous rather than being counted for a candidate group.
+
+This procedure depends on the accession relationships represented in the metadata. It cannot detect homologous sequences whose identifiers are absent from, or inconsistent with, those accession fields. Likewise, accession ambiguity is a limitation of the available mapping information, not evidence about the biological content of a genome. A zero in the presence matrix means that this workflow did not identify a corresponding sequence in the current reference collection; it must not be interpreted as absence of the core gene from the virus genome.
+
+Accordingly, the no-hit genome groups and the ambiguous accession relationship are candidates for subsequent accession reconciliation and, where appropriate, homology-based identification. The present report performs no BLAST search, alignment, or sequence extraction.
+
+## Conclusions
+
+The accession-based inventory identified complete reference coverage for `{r} summary$genomes_with_all_core_genes` of `{r} summary$genomes_in_metadata` unique metadata genome groups. `{r} summary$genomes_without_reference_hits` groups had no accession-linked reference hit, and `{r} summary$ambiguous_accession_assignments` distinct normalized accession key(s) were ambiguous. The no-hit groups require further investigation to determine whether relevant homologues can be identified or their accessions reconciled. This conclusion concerns reference-sequence identification only; it does not establish biological gene absence.
+
+The full presence matrix and matching audit records are retained in `results/accession_matching/` for downstream review.

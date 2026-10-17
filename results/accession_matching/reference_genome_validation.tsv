@@ -1,0 +1,5 @@
+Virus	FASTA accession	Genome group ID	Core genes represented	Uniquely matched core genes	Matching status
+CuniNPV	AF403738	AF403738	38	38	matched_unique
+NeabNPV	DQ317692	DQ317692	38	38	matched_unique
+NeleNPV	AY349019	AY349019	38	38	matched_unique
+NeseNPV	AY430810	AY430810	38	38	matched_unique

@@ -1,0 +1,4 @@
+gene	source_alignment	start	end	alignment_length
+polh_gran	results/alignments/three_genes/individual/18_1_polhgran_alpha_beta_gamma.fna	1	961	961
+lef8	results/alignments/three_genes/individual/22_lef8.fna	962	5647	4686
+lef9	results/alignments/three_genes/individual/25_lef9.fna	5648	8003	2356

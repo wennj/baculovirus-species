@@ -1,0 +1,17 @@
+Accession matching completed.
+Metadata accession records: 632
+Unique genome groups: 532
+Nucleotide FASTA files: 38
+FASTA records: 23294
+polh/gran marker records: 612
+Uniquely matched polh/gran records: 612
+Ambiguous polh/gran records: 0
+Unmatched polh/gran records: 0
+Complete core-gene genome groups: 520
+Complete three-gene genome groups: 519
+Three-gene eligible genome groups: 520
+Multiple reference combinations: 3627
+Ambiguous normalized FASTA accessions: 0
+Resolved cross-priority accession conflicts: 1
+Unmatched FASTA gene records: 0
+Duplicate FASTA header records: 0

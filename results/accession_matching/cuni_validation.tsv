@@ -1,0 +1,2 @@
+FASTA_Accession	Genome_Group_ID	polh_gran_reference_present	lef8_reference_present	lef9_reference_present	three_gene_complete	three_gene_eligible	eligibility_reason
+AF403738	AF403738	0	1	1	FALSE	TRUE	cuni_exception_two_genes
