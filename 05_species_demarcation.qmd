@@ -1,0 +1,228 @@
+---
+title: "K2P-based species demarcation in Baculoviridae"
+---
+
+# Input data
+
+This analysis uses the K2P distances already calculated in `04_substitution_patterns.qmd`. No K2P distances are recalculated and no existing figures are overwritten.
+
+```{r}
+#| label: load-packages
+
+library(ggplot2)
+
+options(stringsAsFactors = FALSE)
+```
+
+```{r}
+#| label: load-k2p-results
+
+input_path <- file.path("results", "substitution_patterns", "pairwise_substitution_patterns.tsv")
+output_dir <- file.path("results", "species_demarcation")
+figure_dir <- file.path(output_dir, "figures")
+if (!file.exists(input_path)) stop("The existing K2P results are missing: ", input_path, call. = FALSE)
+
+read_tsv <- function(path) read.delim(path, sep = "\t", quote = "", na.strings = "", check.names = FALSE, stringsAsFactors = FALSE)
+substitution_patterns <- read_tsv(input_path)
+required_columns <- c("genome_group_id_1", "genome_group_id_2", "k2p_distance")
+if (length(setdiff(required_columns, names(substitution_patterns))) > 0L) stop("The K2P results lack required columns.", call. = FALSE)
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(figure_dir, recursive = TRUE, showWarnings = FALSE)
+```
+
+# K2P-distance data and thresholds
+
+```{r}
+#| label: validate-k2p-results
+
+pair_keys <- paste(substitution_patterns$genome_group_id_1, substitution_patterns$genome_group_id_2, sep = "\r")
+if (nrow(substitution_patterns) != 134940L) stop("Unexpected number of pairwise comparisons.", call. = FALSE)
+if (anyDuplicated(pair_keys) || any(substitution_patterns$genome_group_id_1 == substitution_patterns$genome_group_id_2)) stop("The input contains duplicate pairs or self-comparisons.", call. = FALSE)
+
+is_finite_k2p <- is.finite(substitution_patterns$k2p_distance)
+k2p_values <- substitution_patterns$k2p_distance[is_finite_k2p]
+if (!length(k2p_values)) stop("No finite K2P distances are available.", call. = FALSE)
+
+number_of_comparisons <- nrow(substitution_patterns)
+number_of_valid_distances <- length(k2p_values)
+number_of_undefined_distances <- sum(!is_finite_k2p)
+minimum_k2p <- min(k2p_values)
+maximum_k2p <- max(k2p_values)
+binwidth <- 0.005
+boundary <- 0
+
+full_breaks <- seq(boundary, ceiling(maximum_k2p / binwidth) * binwidth, by = binwidth)
+full_counts <- hist(k2p_values, breaks = full_breaks, right = TRUE, include.lowest = TRUE, plot = FALSE)$counts
+if (sum(full_counts) != number_of_valid_distances) stop("Full-histogram frequencies do not sum to the number of valid K2P distances.", call. = FALSE)
+
+zoom_upper <- 0.25
+zoom_values <- k2p_values[k2p_values >= 0 & k2p_values <= zoom_upper]
+zoom_breaks <- seq(0, zoom_upper, by = binwidth)
+zoom_counts <- hist(zoom_values, breaks = zoom_breaks, right = TRUE, include.lowest = TRUE, plot = FALSE)$counts
+if (sum(zoom_counts) != length(zoom_values)) stop("Zoom-histogram frequencies do not match the displayed K2P values.", call. = FALSE)
+
+threshold_summary <- data.frame(
+  interval = c("< 0.015", "0.015 to 0.05", "> 0.05"),
+  number_of_comparisons = c(
+    sum(k2p_values < 0.015),
+    sum(k2p_values >= 0.015 & k2p_values <= 0.05),
+    sum(k2p_values > 0.05)
+  ),
+  stringsAsFactors = FALSE
+)
+if (sum(threshold_summary$number_of_comparisons) != number_of_valid_distances) stop("Threshold counts do not cover all valid K2P distances.", call. = FALSE)
+threshold_summary
+```
+
+The analysis contains `{r} number_of_comparisons` pairwise comparisons, of which `{r} number_of_valid_distances` have finite K2P distances and `{r} number_of_undefined_distances` are undefined. The valid distances range from `{r} signif(minimum_k2p, 6)` to `{r} signif(maximum_k2p, 6)` substitutions/site. The histogram bin width is `{r} binwidth` substitutions/site.
+
+# Full K2P distribution
+
+```{r}
+#| label: create-full-k2p-histogram
+
+full_x_breaks <- seq(0, ceiling(maximum_k2p / 0.05) * 0.05, by = 0.05)
+full_histogram <- ggplot(data.frame(k2p_distance = k2p_values), aes(x = k2p_distance)) +
+  annotate("rect", xmin = 0, xmax = 0.015, ymin = -Inf, ymax = Inf, fill = "lightgreen", alpha = 0.4) +
+  annotate("rect", xmin = 0.015, xmax = 0.05, ymin = -Inf, ymax = Inf, fill = "yellow", alpha = 0.2) +
+  annotate("rect", xmin = 0.05, xmax = maximum_k2p, ymin = -Inf, ymax = Inf, fill = "lightcoral", alpha = 0.2) +
+  geom_histogram(binwidth = binwidth, boundary = boundary, fill = "grey", colour = "black") +
+  scale_x_continuous(limits = c(0, maximum_k2p), breaks = full_x_breaks, expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(title = "K2P distances among baculoviruses", x = "K2P distance", y = "Count") +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    axis.ticks = element_line(color = "black", linewidth = 0.5),
+    panel.background = element_rect(fill = "white", colour = NA),
+    plot.background = element_rect(fill = "white", colour = NA)
+  )
+
+full_histogram_path <- file.path(figure_dir, "three_genes_k2p_histogram_thresholds_full.png")
+ggsave(full_histogram_path, full_histogram, width = 8, height = 3, units = "in", dpi = 300, bg = "white")
+if (!file.exists(full_histogram_path) || file.info(full_histogram_path)$size <= 0) stop("The full K2P histogram was not created.", call. = FALSE)
+
+px_pair_matches <- grepl("PX739045", substitution_patterns$genome_group_id_1, fixed = TRUE) |
+  grepl("PX739045", substitution_patterns$genome_group_id_2, fixed = TRUE)
+px_k2p_values <- substitution_patterns$k2p_distance[px_pair_matches & is.finite(substitution_patterns$k2p_distance)]
+if (!length(px_k2p_values)) stop("No finite K2P distances were found for pairwise comparisons containing PX739045.", call. = FALSE)
+px_histogram_binwidth <- binwidth
+px_histogram_maximum <- max(px_k2p_values)
+px_histogram_breaks <- seq(0, ceiling(px_histogram_maximum / px_histogram_binwidth) * px_histogram_binwidth, by = px_histogram_binwidth)
+px_histogram_counts <- hist(px_k2p_values, breaks = px_histogram_breaks, right = TRUE, include.lowest = TRUE, plot = FALSE)$counts
+if (sum(px_histogram_counts) != length(px_k2p_values)) stop("PX739045 histogram frequencies do not sum to the number of finite K2P distances.", call. = FALSE)
+
+px_histogram <- ggplot(data.frame(k2p_distance = px_k2p_values), aes(x = k2p_distance)) +
+  annotate("rect", xmin = 0, xmax = 0.015, ymin = -Inf, ymax = Inf, fill = "lightgreen", alpha = 0.4) +
+  annotate("rect", xmin = 0.015, xmax = 0.05, ymin = -Inf, ymax = Inf, fill = "yellow", alpha = 0.2) +
+  annotate("rect", xmin = 0.05, xmax = px_histogram_maximum, ymin = -Inf, ymax = Inf, fill = "lightcoral", alpha = 0.2) +
+  geom_histogram(binwidth = px_histogram_binwidth, boundary = boundary, fill = "grey", colour = "black") +
+  scale_x_continuous(
+    limits = c(0, px_histogram_maximum),
+    breaks = seq(0, ceiling(px_histogram_maximum / 0.05) * 0.05, by = 0.05),
+    expand = c(0, 0)
+  ) +
+  scale_y_continuous(
+    limits = c(0, max(px_histogram_counts)),
+    breaks = pretty(c(0, max(px_histogram_counts))),
+    expand = c(0, 0)
+  ) +
+  labs(title = "K2P distances for pairwise comparisons containing PX739045", x = "K2P distance", y = "Count") +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    axis.ticks = element_line(color = "black", linewidth = 0.5),
+    panel.background = element_rect(fill = "white", colour = NA),
+    plot.background = element_rect(fill = "white", colour = NA)
+  )
+
+px_histogram_path <- file.path(figure_dir, "three_genes_k2p_histogram_thresholds_full_PX739045.png")
+ggsave(px_histogram_path, px_histogram, width = 8, height = 3, units = "in", dpi = 300, bg = "white")
+if (!file.exists(px_histogram_path) || file.info(px_histogram_path)$size <= 0) stop("The PX739045 K2P histogram was not created.", call. = FALSE)
+
+px_histogram_validation <- data.frame(
+  target = "PX739045",
+  number_of_pairwise_comparisons = sum(px_pair_matches),
+  number_of_finite_k2p_distances = length(px_k2p_values),
+  number_of_undefined_k2p_distances = sum(px_pair_matches & !is.finite(substitution_patterns$k2p_distance)),
+  output_path = px_histogram_path,
+  stringsAsFactors = FALSE
+)
+px_histogram_validation
+
+full_histogram_no_background <- full_histogram
+full_histogram_no_background$layers <- full_histogram_no_background$layers[-seq_len(3L)]
+
+full_histogram_grey <- full_histogram_no_background
+full_histogram_grey_path <- file.path(figure_dir, "three_genes_k2p_histogram_grey_full.png")
+ggsave(full_histogram_grey_path, full_histogram_grey, width = 8, height = 3, units = "in", dpi = 300, bg = "white")
+if (!file.exists(full_histogram_grey_path) || file.info(full_histogram_grey_path)$size <= 0) stop("The grey full K2P histogram was not created.", call. = FALSE)
+
+full_histogram_heatmap_colors <- full_histogram_no_background
+full_histogram_heatmap_colors$layers[[1]]$mapping$fill <- aes(fill = after_stat((xmin + xmax) / 2))$fill
+full_histogram_heatmap_colors$layers[[1]]$aes_params$fill <- NULL
+full_histogram_heatmap_colors <- full_histogram_heatmap_colors +
+  scale_fill_gradientn(
+    colours = rev(c("#2166AC", "#67A9CF", "#D1E5F0", "#F7F7F7", "#A6DBA0", "#009E73")),
+    limits = range(k2p_values),
+    oob = scales::squish
+  ) +
+  theme(legend.position = "none")
+full_histogram_heatmap_colors_path <- file.path(figure_dir, "three_genes_k2p_histogram_heatmap_colors_full.png")
+ggsave(full_histogram_heatmap_colors_path, full_histogram_heatmap_colors, width = 8, height = 3, units = "in", dpi = 300, bg = "white")
+if (!file.exists(full_histogram_heatmap_colors_path) || file.info(full_histogram_heatmap_colors_path)$size <= 0) stop("The heatmap-coloured full K2P histogram was not created.", call. = FALSE)
+```
+
+# K2P distribution from 0 to 0.25
+
+```{r}
+#| label: create-zoom-k2p-histogram
+
+y_max_zoom <- 1250
+zoom_histogram <- ggplot(data.frame(k2p_distance = k2p_values), aes(x = k2p_distance)) +
+  annotate("rect", xmin = 0, xmax = 0.015, ymin = -Inf, ymax = Inf, fill = "lightgreen", alpha = 0.4) +
+  annotate("rect", xmin = 0.015, xmax = 0.05, ymin = -Inf, ymax = Inf, fill = "yellow", alpha = 0.2) +
+  annotate("rect", xmin = 0.05, xmax = 0.25, ymin = -Inf, ymax = Inf, fill = "lightcoral", alpha = 0.2) +
+  geom_histogram(binwidth = binwidth, boundary = boundary, fill = "grey", colour = "black") +
+  scale_x_continuous(breaks = seq(0, 0.25, by = 0.01), limits = c(0, 0.25), expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  coord_cartesian(ylim = c(0, y_max_zoom)) +
+  labs(title = "K2P distances among baculoviruses (0–0.25)", x = "K2P distance", y = "Count") +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    axis.ticks = element_line(color = "black", linewidth = 0.5),
+    panel.background = element_rect(fill = "white", colour = NA),
+    plot.background = element_rect(fill = "white", colour = NA)
+  )
+
+zoom_histogram_path <- file.path(figure_dir, "three_genes_k2p_histogram_thresholds_zoom.png")
+ggsave(zoom_histogram_path, zoom_histogram, width = 8, height = 3, units = "in", dpi = 300, bg = "white")
+if (!file.exists(zoom_histogram_path) || file.info(zoom_histogram_path)$size <= 0) stop("The zoomed K2P histogram was not created.", call. = FALSE)
+```
+
+# Validation
+
+```{r}
+#| label: validate-exports
+
+expected_dimensions <- c(width = as.integer(8 * 300), height = as.integer(3 * 300))
+png_dimensions <- function(path) {
+  bytes <- readBin(path, what = "raw", n = 24L)
+  if (length(bytes) < 24L || !identical(bytes[1:8], as.raw(c(137, 80, 78, 71, 13, 10, 26, 10)))) stop("Not a valid PNG file: ", path, call. = FALSE)
+  c(width = sum(as.double(bytes[17:20]) * 256^(3:0)), height = sum(as.double(bytes[21:24]) * 256^(3:0)))
+}
+if (any(png_dimensions(full_histogram_path) != expected_dimensions) || any(png_dimensions(zoom_histogram_path) != expected_dimensions)) stop("The histogram PNG dimensions are incorrect.", call. = FALSE)
+if (sum(full_counts) != number_of_valid_distances || sum(zoom_counts) != length(zoom_values)) stop("Histogram frequency validation failed.", call. = FALSE)
+```
+
+The two new figures are written to `results/species_demarcation/figures/`. Existing input files and figures in other result directories are not modified.

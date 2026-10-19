@@ -241,6 +241,108 @@ for (result in pairwise_results) {
 }
 ```
 
+# Heatmap of three-gene identities
+
+The heatmap uses the already calculated `three_genes` pairwise-identity table. No sequence identities are recalculated. Rows and columns use the same hierarchical-clustering order based on `100 - identity`, and genome labels are omitted for readability.
+
+```{r}
+#| label: create-three-gene-identity-heatmap
+
+three_gene_pairs <- pairwise_results$three_genes
+heatmap_genomes <- unique(c(three_gene_pairs$genome_group_id_1, three_gene_pairs$genome_group_id_2))
+if (length(heatmap_genomes) != 520L) stop("The three-gene pairwise table must contain 520 genomes.", call. = FALSE)
+if (anyNA(three_gene_pairs$identity_percentage)) stop("Cannot create a complete heatmap because the three-gene pairwise table contains NA identities.", call. = FALSE)
+
+identity_matrix <- matrix(
+  NA_real_,
+  nrow = length(heatmap_genomes),
+  ncol = length(heatmap_genomes),
+  dimnames = list(heatmap_genomes, heatmap_genomes)
+)
+pair_rows <- match(three_gene_pairs$genome_group_id_1, heatmap_genomes)
+pair_columns <- match(three_gene_pairs$genome_group_id_2, heatmap_genomes)
+identity_matrix[cbind(pair_rows, pair_columns)] <- three_gene_pairs$identity_percentage
+identity_matrix[cbind(pair_columns, pair_rows)] <- three_gene_pairs$identity_percentage
+diag(identity_matrix) <- 100
+
+if (anyNA(identity_matrix) || !isTRUE(all.equal(identity_matrix, t(identity_matrix)))) {
+  stop("The three-gene pairwise table did not produce a complete symmetric identity matrix.", call. = FALSE)
+}
+
+identity_clustering <- hclust(as.dist(100 - identity_matrix), method = "complete")
+heatmap_order <- identity_clustering$order
+identity_matrix <- identity_matrix[heatmap_order, heatmap_order, drop = FALSE]
+
+heatmap_data <- expand.grid(
+  row = seq_len(nrow(identity_matrix)),
+  column = seq_len(ncol(identity_matrix))
+)
+heatmap_data$identity_percentage <- c(identity_matrix)
+
+three_gene_heatmap <- ggplot(heatmap_data, aes(x = column, y = row, fill = identity_percentage)) +
+  geom_raster() +
+  scale_fill_gradientn(
+    colours = c("#2166AC", "#67A9CF", "#D1E5F0", "#F7F7F7", "#EF8A62", "#B2182B"),
+    limits = c(0, 100),
+    breaks = seq(0, 100, by = 20),
+    name = "Identity (%)"
+  ) +
+  scale_x_continuous(expand = c(0, 0), breaks = NULL) +
+  scale_y_reverse(expand = c(0, 0), breaks = NULL) +
+  coord_fixed() +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_family = "Arial") +
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text = element_blank(),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+    panel.background = element_rect(fill = "white", colour = NA),
+    plot.background = element_rect(fill = "white", colour = NA)
+  )
+
+three_gene_heatmap_path <- file.path(figure_dir, "three_genes_pairwise_identity_heatmap.png")
+ggsave(three_gene_heatmap_path, three_gene_heatmap, width = 20, height = 20, units = "cm", dpi = 600, bg = "white")
+if (!file.exists(three_gene_heatmap_path)) stop("The three-gene identity heatmap was not created.", call. = FALSE)
+
+lower_identity_matrix <- identity_matrix
+lower_identity_matrix[upper.tri(lower_identity_matrix)] <- NA_real_
+lower_heatmap_data <- expand.grid(
+  row = seq_len(nrow(lower_identity_matrix)),
+  column = seq_len(ncol(lower_identity_matrix))
+)
+lower_heatmap_data$identity_percentage <- c(lower_identity_matrix)
+
+three_gene_heatmap_lower <- ggplot(lower_heatmap_data, aes(x = column, y = row, fill = identity_percentage)) +
+  geom_raster() +
+  scale_fill_gradientn(
+    colours = c("#2166AC", "#67A9CF", "#D1E5F0", "#F7F7F7", "#EF8A62", "#B2182B"),
+    limits = c(0, 100),
+    breaks = seq(0, 100, by = 20),
+    name = "Identity (%)",
+    na.value = "white"
+  ) +
+  scale_x_continuous(expand = c(0, 0), breaks = NULL) +
+  scale_y_reverse(expand = c(0, 0), breaks = NULL) +
+  coord_fixed() +
+  labs(x = NULL, y = NULL) +
+  theme_classic(base_family = "Arial") +
+  theme(
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text = element_blank(),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+    panel.background = element_rect(fill = "white", colour = NA),
+    plot.background = element_rect(fill = "white", colour = NA)
+  )
+
+three_gene_heatmap_lower_path <- file.path(figure_dir, "three_genes_pairwise_identity_heatmap_lower_triangle.png")
+ggsave(three_gene_heatmap_lower_path, three_gene_heatmap_lower, width = 20, height = 20, units = "cm", dpi = 600, bg = "white")
+if (!file.exists(three_gene_heatmap_lower_path)) stop("The lower-triangle three-gene identity heatmap was not created.", call. = FALSE)
+```
+
 # Identity distributions
 
 All histograms use identical one-percentage-point classes spanning 1–100%. The y-axis is allowed to differ among datasets because the distributions have different frequencies. The plots are descriptive and no putative threshold is shown.
@@ -319,6 +421,50 @@ unexpected_pdfs <- list.files(figure_dir, pattern = "\\.pdf$", full.names = TRUE
 if (length(unexpected_pdfs) > 0L || file.exists(file.path(figure_dir, "four_panel_pairwise_identity.png"))) {
   stop("Unexpected PDF or combined four-panel figure found in the figure directory.", call. = FALSE)
 }
+
+heatmap_colours <- c("#2166AC", "#67A9CF", "#D1E5F0", "#F7F7F7", "#EF8A62", "#B2182B")
+three_genes_colored_histogram <- ggplot(
+  pairwise_results$three_genes[!is.na(pairwise_results$three_genes$identity_percentage), , drop = FALSE],
+  aes(x = identity_percentage)
+) +
+  geom_histogram(
+    aes(fill = after_stat((xmin + xmax) / 2)),
+    breaks = class_breaks,
+    closed = "right",
+    colour = "black"
+  ) +
+  scale_fill_gradientn(
+    colours = heatmap_colours,
+    limits = c(0, 100),
+    name = "Identity (%)",
+    oob = scales::squish
+  ) +
+  scale_x_continuous(limits = c(1, 100), breaks = seq(0, 100, by = 10), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.05))) +
+  labs(x = "Pairwise nucleotide sequence identity (%)", y = "Frequency") +
+  coord_cartesian(xlim = c(1, 100), ylim = c(0, NA), expand = FALSE, clip = "off") +
+  theme_classic(base_family = "Arial") +
+  theme(
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.title = element_text(size = plot_font_size),
+    axis.text = element_text(size = plot_font_size),
+    plot.margin = margin(t = 6, r = 18, b = 6, l = 6, unit = "pt")
+  )
+three_genes_colored_histogram_path <- file.path(figure_dir, "three_genes_pairwise_identity_histogram_colored.png")
+ggsave(three_genes_colored_histogram_path, three_genes_colored_histogram, width = 25.17, height = 10.5, units = "cm", dpi = 300, bg = "white")
+if (!file.exists(three_genes_colored_histogram_path)) stop("The coloured three-gene histogram was not created.", call. = FALSE)
+if (any(png_dimensions(three_genes_colored_histogram_path) != expected_png_dimensions)) stop("The coloured three-gene histogram has unexpected dimensions.", call. = FALSE)
+
+three_genes_colored_histogram_zoom <- three_genes_colored_histogram +
+  scale_x_continuous(limits = c(35, 100), breaks = c(40, 50, 60, 70, 80, 90, 100), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0, 30000), breaks = seq(0, 30000, by = 5000), expand = c(0, 0)) +
+  coord_cartesian(xlim = c(35, 100), ylim = c(0, 30000), expand = FALSE, clip = "off")
+three_genes_colored_histogram_zoom_path <- file.path(figure_dir, "three_genes_pairwise_identity_histogram_colored_zoom.png")
+ggsave(three_genes_colored_histogram_zoom_path, three_genes_colored_histogram_zoom, width = 25.17, height = 10.5, units = "cm", dpi = 300, bg = "white")
+if (!file.exists(three_genes_colored_histogram_zoom_path)) stop("The zoomed coloured three-gene histogram was not created.", call. = FALSE)
+if (any(png_dimensions(three_genes_colored_histogram_zoom_path) != expected_png_dimensions)) stop("The zoomed coloured three-gene histogram has unexpected dimensions.", call. = FALSE)
 ```
 
 The individual distributions are shown below and are exported as PNG files with identical dimensions.

@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Transition and transversion patterns in Baculoviridae</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="04_substitution_patterns_files/libs/clipboard/clipboard.min.js"></script>
+<script src="04_substitution_patterns_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="04_substitution_patterns_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="04_substitution_patterns_files/libs/quarto-html/popper.min.js"></script>
+<script src="04_substitution_patterns_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="04_substitution_patterns_files/libs/quarto-html/anchor.min.js"></script>
+<link href="04_substitution_patterns_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="04_substitution_patterns_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="04_substitution_patterns_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="04_substitution_patterns_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="04_substitution_patterns_files/libs/bootstrap/bootstrap-917079515d91bccb85b543faf8aa8bb6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Transition and transversion patterns in Baculoviridae</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This report was generated using AI under general human direction. At the time of generation, the contents have not been comprehensively reviewed by a human analyst.</p>
+<!--
+To indicate human review: Delete the line above about contents not being reviewed, and replace this comment with:
+The contents have been reviewed and validated by [Your Name], [Your Role] on [Date].
+-->
+</div>
+</div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Transitions and transversions describe two classes of nucleotide differences. Their pairwise frequencies provide a descriptive view of how observed substitutions are distributed among baculovirus genomes as nucleotide identity decreases. This analysis also compares observed divergence with the Kimura two-parameter (K2P) distance. It is exploratory: no species-demarcation threshold is applied, and observed differences are not interpreted as a direct count of historical substitution events.</p>
+</section>
+<section id="input-data" class="level1">
+<h1>Input data</h1>
+<p>The analysis uses the three-gene concatenated nucleotide alignment generated in <code>02_sequence_alignment.qmd</code> and the corresponding pairwise identity table generated in <code>03_pairwise_sequence_identity.qmd</code>. No alignment is recalculated and no MAFFT call is made.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>alignment_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"results"</span>, <span class="st">"alignments"</span>, <span class="st">"three_genes"</span>, <span class="st">"concatenated"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>identity_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"results"</span>, <span class="st">"pairwise_sequence_identity"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>output_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="st">"results"</span>, <span class="st">"substitution_patterns"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>figure_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(output_dir, <span class="st">"figures"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>alignment_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(alignment_dir, <span class="st">"three_genes.fna"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>identity_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(identity_dir, <span class="st">"three_genes_pairwise_identity.tsv"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>required_files <span class="ot">&lt;-</span> <span class="fu">c</span>(alignment_path, <span class="fu">file.path</span>(alignment_dir, <span class="st">"partitions.tsv"</span>), identity_path)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>missing_files <span class="ot">&lt;-</span> required_files[<span class="sc">!</span><span class="fu">file.exists</span>(required_files)]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(missing_files) <span class="sc">&gt;</span> <span class="dv">0</span>L) <span class="fu">stop</span>(<span class="st">"Required step-02/03 files are missing:</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">paste</span>(missing_files, <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>read_tsv <span class="ot">&lt;-</span> <span class="cf">function</span>(path) <span class="fu">read.delim</span>(path, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">quote =</span> <span class="st">""</span>, <span class="at">na.strings =</span> <span class="st">""</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>identity_table <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(identity_path)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>partitions <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="fu">file.path</span>(alignment_dir, <span class="st">"partitions.tsv"</span>))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>required_identity_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"genome_group_id_1"</span>, <span class="st">"genome_group_id_2"</span>, <span class="st">"identical_positions"</span>, <span class="st">"compared_positions"</span>, <span class="st">"identity_percentage"</span>, <span class="st">"compared_fraction"</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(<span class="fu">setdiff</span>(required_identity_columns, <span class="fu">names</span>(identity_table))) <span class="sc">&gt;</span> <span class="dv">0</span>L) <span class="fu">stop</span>(<span class="st">"The step-03 identity table lacks required columns."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(<span class="fu">setdiff</span>(<span class="fu">c</span>(<span class="st">"gene"</span>, <span class="st">"start"</span>, <span class="st">"end"</span>, <span class="st">"alignment_length"</span>), <span class="fu">names</span>(partitions))) <span class="sc">&gt;</span> <span class="dv">0</span>L) <span class="fu">stop</span>(<span class="st">"The three-gene partition table lacks required columns."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(output_dir, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(figure_dir, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>read_fasta <span class="ot">&lt;-</span> <span class="cf">function</span>(path) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  lines <span class="ot">&lt;-</span> <span class="fu">readLines</span>(path, <span class="at">warn =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  header_rows <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">startsWith</span>(lines, <span class="st">"&gt;"</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(header_rows) <span class="sc">==</span> <span class="dv">0</span>L <span class="sc">||</span> header_rows[<span class="dv">1</span>] <span class="sc">!=</span> <span class="dv">1</span>L) <span class="fu">stop</span>(<span class="st">"Invalid FASTA file: "</span>, path, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  records <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq_along</span>(header_rows), <span class="cf">function</span>(i) {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    start <span class="ot">&lt;-</span> header_rows[i] <span class="sc">+</span> <span class="dv">1</span>L</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    end <span class="ot">&lt;-</span> <span class="cf">if</span> (i <span class="sc">&lt;</span> <span class="fu">length</span>(header_rows)) header_rows[i <span class="sc">+</span> <span class="dv">1</span>L] <span class="sc">-</span> <span class="dv">1</span>L <span class="cf">else</span> <span class="fu">length</span>(lines)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    sequence <span class="ot">&lt;-</span> <span class="fu">paste</span>(lines[start<span class="sc">:</span>end][<span class="fu">nzchar</span>(<span class="fu">trimws</span>(lines[start<span class="sc">:</span>end]))], <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">nzchar</span>(sequence)) <span class="fu">stop</span>(<span class="st">"Empty FASTA sequence in "</span>, path, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">header =</span> <span class="fu">substring</span>(lines[header_rows[i]], <span class="dv">2</span>L), <span class="at">sequence =</span> sequence)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  headers <span class="ot">&lt;-</span> <span class="fu">vapply</span>(records, <span class="st">`</span><span class="at">[[</span><span class="st">`</span>, <span class="fu">character</span>(<span class="dv">1</span>), <span class="st">"header"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">anyDuplicated</span>(headers)) <span class="fu">stop</span>(<span class="st">"Duplicate FASTA headers in "</span>, path, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  records</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>records <span class="ot">&lt;-</span> <span class="fu">read_fasta</span>(alignment_path)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>genome_ids <span class="ot">&lt;-</span> <span class="fu">vapply</span>(records, <span class="st">`</span><span class="at">[[</span><span class="st">`</span>, <span class="fu">character</span>(<span class="dv">1</span>), <span class="st">"header"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>sequences <span class="ot">&lt;-</span> <span class="fu">vapply</span>(records, <span class="st">`</span><span class="at">[[</span><span class="st">`</span>, <span class="fu">character</span>(<span class="dv">1</span>), <span class="st">"sequence"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>alignment_lengths <span class="ot">&lt;-</span> <span class="fu">nchar</span>(sequences)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(genome_ids) <span class="sc">!=</span> <span class="dv">520</span>L <span class="sc">||</span> <span class="fu">anyDuplicated</span>(genome_ids)) <span class="fu">stop</span>(<span class="st">"The three-gene alignment must contain 520 unique genome_group_id headers."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(<span class="fu">unique</span>(alignment_lengths)) <span class="sc">!=</span> <span class="dv">1</span>L) <span class="fu">stop</span>(<span class="st">"Alignment sequences do not have a common length."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>alignment_length <span class="ot">&lt;-</span> <span class="fu">unique</span>(alignment_lengths)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(identity_table) <span class="sc">!=</span> <span class="fu">choose</span>(<span class="fu">length</span>(genome_ids), <span class="dv">2</span>)) <span class="fu">stop</span>(<span class="st">"The identity table does not contain the expected number of pairwise comparisons."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">anyDuplicated</span>(<span class="fu">paste</span>(identity_table<span class="sc">$</span>genome_group_id_1, identity_table<span class="sc">$</span>genome_group_id_2, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\r</span><span class="st">"</span>)) <span class="sc">||</span> <span class="fu">any</span>(identity_table<span class="sc">$</span>genome_group_id_1 <span class="sc">==</span> identity_table<span class="sc">$</span>genome_group_id_2)) <span class="fu">stop</span>(<span class="st">"The identity table contains duplicate or self-comparisons."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">all</span>(identity_table<span class="sc">$</span>genome_group_id_1 <span class="sc">%in%</span> genome_ids) <span class="sc">||</span> <span class="sc">!</span><span class="fu">all</span>(identity_table<span class="sc">$</span>genome_group_id_2 <span class="sc">%in%</span> genome_ids)) <span class="fu">stop</span>(<span class="st">"The identity table contains an ID absent from the alignment."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>partitions <span class="ot">&lt;-</span> partitions[<span class="fu">match</span>(<span class="fu">c</span>(<span class="st">"polh_gran"</span>, <span class="st">"lef8"</span>, <span class="st">"lef9"</span>), partitions<span class="sc">$</span>gene), , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(partitions) <span class="sc">!=</span> <span class="dv">3</span>L <span class="sc">||</span> <span class="fu">anyNA</span>(partitions<span class="sc">$</span>start) <span class="sc">||</span> <span class="fu">any</span>(partitions<span class="sc">$</span>start <span class="sc">!=</span> <span class="fu">c</span>(<span class="dv">1</span>L, <span class="fu">head</span>(partitions<span class="sc">$</span>end, <span class="sc">-</span><span class="dv">1</span>L) <span class="sc">+</span> <span class="dv">1</span>L)) <span class="sc">||</span> partitions<span class="sc">$</span>end[<span class="dv">3</span>] <span class="sc">!=</span> alignment_length) <span class="fu">stop</span>(<span class="st">"The three-gene partitions are invalid."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>cuni_index <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="st">"AF403738"</span>, genome_ids)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.na</span>(cuni_index)) <span class="fu">stop</span>(<span class="st">"CuniNPV (AF403738) is absent from the alignment."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>cuni_polh <span class="ot">&lt;-</span> <span class="fu">substring</span>(sequences[cuni_index], partitions<span class="sc">$</span>start[<span class="dv">1</span>], partitions<span class="sc">$</span>end[<span class="dv">1</span>])</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">strsplit</span>(cuni_polh, <span class="st">""</span>, <span class="at">fixed =</span> <span class="cn">TRUE</span>)[[<span class="dv">1</span>]] <span class="sc">!=</span> <span class="st">"-"</span>)) <span class="fu">stop</span>(<span class="st">"The CuniNPV polh/gran partition is not gap-only."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="methods" class="level1">
+<h1>Methods</h1>
+<p>Only positions at which both sequences contain an unambiguous A, C, G, or T are included. Gaps, N, and all other IUPAC ambiguity symbols are excluded by pairwise deletion. A transition is A↔︎G or C↔︎T; a transversion is A↔︎C, A↔︎T, G↔︎C, or G↔︎T. For each pair, <span class="math display">\[P = Ts/L\]</span> and <span class="math display">\[Q = Tv/L\]</span>, where <span class="math display">\[L\]</span> is the number of valid compared positions. Observed divergence is <span class="math display">\[P+Q\]</span>, and K2P is calculated only when both logarithmic arguments in the specified formula are positive.</p>
+<p>The indicator matrices below calculate all pairwise counts using matrix multiplication. The sequences are converted once to a raw nucleotide matrix; no per-pair <code>strsplit()</code> is used.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pairwise_substitutions <span class="ot">&lt;-</span> <span class="cf">function</span>(sequences, genome_ids, alignment_length) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(sequences)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  raw_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="fu">toupper</span>(sequences), charToRaw), <span class="at">use.names =</span> <span class="cn">FALSE</span>), <span class="at">nrow =</span> n, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  codes <span class="ot">&lt;-</span> <span class="fu">as.raw</span>(<span class="fu">charToRaw</span>(<span class="st">"ACGT"</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  indicators <span class="ot">&lt;-</span> <span class="fu">lapply</span>(codes, <span class="cf">function</span>(code) raw_matrix <span class="sc">==</span> code)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  valid <span class="ot">&lt;-</span> indicators[[<span class="dv">1</span>]] <span class="sc">|</span> indicators[[<span class="dv">2</span>]] <span class="sc">|</span> indicators[[<span class="dv">3</span>]] <span class="sc">|</span> indicators[[<span class="dv">4</span>]]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  compared_matrix <span class="ot">&lt;-</span> <span class="fu">tcrossprod</span>(valid <span class="sc">*</span> <span class="dv">1</span>L)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  identical_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>L, <span class="at">nrow =</span> n, <span class="at">ncol =</span> n)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (indicator <span class="cf">in</span> indicators) identical_matrix <span class="ot">&lt;-</span> identical_matrix <span class="sc">+</span> <span class="fu">tcrossprod</span>(indicator <span class="sc">*</span> <span class="dv">1</span>L)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  transition_matrix <span class="ot">&lt;-</span> (indicators[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">3</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">3</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">2</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">4</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">4</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">2</span>]] <span class="sc">*</span> <span class="dv">1</span>L)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  transversion_matrix <span class="ot">&lt;-</span> (indicators[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">2</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">2</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">4</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">4</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">1</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">3</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">2</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">2</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">3</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">3</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">4</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">+</span> (indicators[[<span class="dv">4</span>]] <span class="sc">*</span> <span class="dv">1</span>L) <span class="sc">%*%</span> <span class="fu">t</span>(indicators[[<span class="dv">3</span>]] <span class="sc">*</span> <span class="dv">1</span>L)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  pair_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">upper.tri</span>(compared_matrix), <span class="at">arr.ind =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  compared <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(compared_matrix[pair_indices])</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  identical <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(identical_matrix[pair_indices])</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  transitions <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(transition_matrix[pair_indices])</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  transversions <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(transversion_matrix[pair_indices])</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(compared <span class="sc">&gt;</span> <span class="dv">0</span>, transitions <span class="sc">/</span> compared, <span class="cn">NA_real_</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  Q <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(compared <span class="sc">&gt;</span> <span class="dv">0</span>, transversions <span class="sc">/</span> compared, <span class="cn">NA_real_</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  k2p <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(compared <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> P <span class="sc">-</span> Q) <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> Q) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="sc">-</span><span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> P <span class="sc">-</span> Q) <span class="sc">-</span> <span class="fl">0.25</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> Q), <span class="cn">NA_real_</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">genome_group_id_1 =</span> genome_ids[pair_indices[, <span class="dv">1</span>]], <span class="at">genome_group_id_2 =</span> genome_ids[pair_indices[, <span class="dv">2</span>]],</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">compared_positions =</span> compared, <span class="at">identical_positions =</span> identical, <span class="at">transitions =</span> transitions, <span class="at">transversions =</span> transversions,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">transition_frequency =</span> P, <span class="at">transversion_frequency =</span> Q, <span class="at">observed_divergence =</span> P <span class="sc">+</span> Q,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">identity_percentage =</span> <span class="fu">ifelse</span>(compared <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">100</span> <span class="sc">*</span> identical <span class="sc">/</span> compared, <span class="cn">NA_real_</span>),</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">ts_tv_ratio =</span> <span class="fu">ifelse</span>(transversions <span class="sc">&gt;</span> <span class="dv">0</span>, transitions <span class="sc">/</span> transversions, <span class="cn">NA_real_</span>), <span class="at">k2p_distance =</span> k2p,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>substitution_patterns <span class="ot">&lt;-</span> <span class="fu">pairwise_substitutions</span>(sequences, genome_ids, alignment_length)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The identity values supplied by step 03 are retained as the validation reference. They are not used to replace the identity values calculated from the substitution counts.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pair_key <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) <span class="fu">paste</span>(x, y, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\r</span><span class="st">"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">identical</span>(<span class="fu">pair_key</span>(substitution_patterns<span class="sc">$</span>genome_group_id_1, substitution_patterns<span class="sc">$</span>genome_group_id_2), <span class="fu">pair_key</span>(identity_table<span class="sc">$</span>genome_group_id_1, identity_table<span class="sc">$</span>genome_group_id_2))) <span class="fu">stop</span>(<span class="st">"The substitution results do not preserve the step-03 pair order."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(substitution_patterns<span class="sc">$</span>identical_positions <span class="sc">+</span> substitution_patterns<span class="sc">$</span>transitions <span class="sc">+</span> substitution_patterns<span class="sc">$</span>transversions <span class="sc">!=</span> substitution_patterns<span class="sc">$</span>compared_positions)) <span class="fu">stop</span>(<span class="st">"Identity, transition, and transversion counts do not sum to compared positions."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">abs</span>(substitution_patterns<span class="sc">$</span>observed_divergence <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">-</span> substitution_patterns<span class="sc">$</span>identity_percentage <span class="sc">/</span> <span class="dv">100</span>)) <span class="sc">&gt;</span> <span class="fl">1e-12</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="fu">stop</span>(<span class="st">"Observed divergence is inconsistent with identity."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">abs</span>(substitution_patterns<span class="sc">$</span>identity_percentage <span class="sc">-</span> identity_table<span class="sc">$</span>identity_percentage) <span class="sc">&gt;</span> <span class="fl">1e-10</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="fu">stop</span>(<span class="st">"Calculated identity values disagree with step 03."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(substitution_patterns<span class="sc">$</span>compared_positions <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> substitution_patterns<span class="sc">$</span>identical_positions <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> substitution_patterns<span class="sc">$</span>transitions <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> substitution_patterns<span class="sc">$</span>transversions <span class="sc">&lt;</span> <span class="dv">0</span>)) <span class="fu">stop</span>(<span class="st">"Negative substitution counts detected."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(substitution_patterns<span class="sc">$</span>transition_frequency <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> substitution_patterns<span class="sc">$</span>transition_frequency <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">|</span> substitution_patterns<span class="sc">$</span>transversion_frequency <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">|</span> substitution_patterns<span class="sc">$</span>transversion_frequency <span class="sc">&gt;</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="fu">stop</span>(<span class="st">"Substitution frequencies outside 0–1 detected."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="observed-substitution-patterns" class="level1">
+<h1>Observed substitution patterns</h1>
+<p>The total observed divergence is mathematically determined by nucleotide identity because <span class="math display">\[P+Q = 1 - identity/100\]</span>. The informative comparison here is therefore the relative contribution of transitions and transversions, rather than the overall increase in observed differences alone.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(substitution_patterns, <span class="fu">file.path</span>(output_dir, <span class="st">"pairwise_substitution_patterns.tsv"</span>), <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">na =</span> <span class="st">""</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plot_font_size <span class="ot">&lt;-</span> <span class="dv">14</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plot_width_cm <span class="ot">&lt;-</span> <span class="fl">25.17</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plot_height_cm <span class="ot">&lt;-</span> <span class="fl">10.5</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plot_dpi <span class="ot">&lt;-</span> <span class="dv">300</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plot_theme <span class="ot">&lt;-</span> <span class="fu">theme_classic</span>(<span class="at">base_family =</span> <span class="st">"Arial"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_font_size), <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_font_size), <span class="at">legend.position =</span> <span class="st">"top"</span>, <span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>substitution_long <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">identity_percentage =</span> substitution_patterns<span class="sc">$</span>identity_percentage, <span class="at">frequency =</span> substitution_patterns<span class="sc">$</span>transition_frequency, <span class="at">type =</span> <span class="st">"Transitions"</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">identity_percentage =</span> substitution_patterns<span class="sc">$</span>identity_percentage, <span class="at">frequency =</span> substitution_patterns<span class="sc">$</span>transversion_frequency, <span class="at">type =</span> <span class="st">"Transversions"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>identity_axis_lower <span class="ot">&lt;-</span> <span class="fu">floor</span>(<span class="fu">min</span>(substitution_long<span class="sc">$</span>identity_percentage, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="dv">10</span>) <span class="sc">*</span> <span class="dv">10</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>plot_substitutions <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(substitution_long, <span class="fu">aes</span>(identity_percentage, frequency, <span class="at">colour =</span> type)) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.12</span>, <span class="at">size =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">Transitions =</span> <span class="st">"#0000FF"</span>, <span class="at">Transversions =</span> <span class="st">"#FF0000"</span>)) <span class="sc">+</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(identity_axis_lower, <span class="dv">100</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(identity_axis_lower, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">10</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.4</span>, <span class="at">by =</span> <span class="fl">0.1</span>), <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_percent</span>(<span class="at">accuracy =</span> <span class="dv">1</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.4</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Pairwise nucleotide sequence identity (%)"</span>, <span class="at">y =</span> <span class="st">"Observed nucleotide differences (%)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  plot_theme <span class="sc">+</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">4</span>))) <span class="sc">+</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(identity_axis_lower, <span class="dv">100</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.4</span>), <span class="at">expand =</span> <span class="cn">FALSE</span>, <span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">6</span>, <span class="at">r =</span> <span class="dv">18</span>, <span class="at">b =</span> <span class="dv">6</span>, <span class="at">l =</span> <span class="dv">6</span>, <span class="at">unit =</span> <span class="st">"pt"</span>))</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">file.path</span>(figure_dir, <span class="st">"transitions_transversions.png"</span>), plot_substitutions, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">15</span>, <span class="at">units =</span> <span class="st">"cm"</span>, <span class="at">dpi =</span> plot_dpi, <span class="at">bg =</span> <span class="st">"white"</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>plot_substitutions_zoom <span class="ot">&lt;-</span> plot_substitutions</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>plot_substitutions_zoom<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="fl">2.1</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>plot_substitutions_zoom<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>alpha <span class="ot">&lt;-</span> <span class="fl">0.65</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>plot_substitutions_zoom <span class="ot">&lt;-</span> plot_substitutions_zoom <span class="sc">+</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">95</span>, <span class="dv">100</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">100</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.15</span>, <span class="at">by =</span> <span class="fl">0.05</span>), <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_percent</span>(<span class="at">accuracy =</span> <span class="dv">1</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.4</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">100</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.15</span>), <span class="at">expand =</span> <span class="cn">FALSE</span>, <span class="at">clip =</span> <span class="st">"on"</span>) <span class="sc">+</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_font_size <span class="sc">*</span> <span class="dv">2</span>),</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>),</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.line =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">10</span>, <span class="at">r =</span> <span class="dv">24</span>, <span class="at">b =</span> <span class="dv">10</span>, <span class="at">l =</span> <span class="dv">12</span>, <span class="at">unit =</span> <span class="st">"pt"</span>)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Scale for x is already present.
+Adding another scale for x, which will replace the existing scale.
+Scale for y is already present.
+Adding another scale for y, which will replace the existing scale.
+Coordinate system already present.
+ℹ Adding new coordinate system, which will replace the existing one.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">file.path</span>(figure_dir, <span class="st">"transitions_transversions_zoom.png"</span>), plot_substitutions_zoom, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">15</span>, <span class="at">units =</span> <span class="st">"cm"</span>, <span class="at">dpi =</span> plot_dpi, <span class="at">bg =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 242224 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+</div>
+</section>
+<section id="transitiontransversion-ratio" class="level1">
+<h1>Transition/transversion ratio</h1>
+<p>The Ts/Tv ratio is undefined when no transversion is observed. A central minimum-observation parameter is used for the class summary so that sparse classes do not dominate its visual presentation; excluded classes remain documented in the exported bin table.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>minimum_pairs_per_identity_bin <span class="ot">&lt;-</span> <span class="dv">100</span>L</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>identity_bins <span class="ot">&lt;-</span> <span class="fu">cut</span>(substitution_patterns<span class="sc">$</span>identity_percentage, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">101</span>, <span class="at">by =</span> <span class="dv">1</span>), <span class="at">include.lowest =</span> <span class="cn">TRUE</span>, <span class="at">right =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>ratio_summary_all <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">levels</span>(identity_bins), <span class="cf">function</span>(bin) {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  values <span class="ot">&lt;-</span> substitution_patterns<span class="sc">$</span>ts_tv_ratio[identity_bins <span class="sc">==</span> bin <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>ts_tv_ratio)]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  bounds <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">strsplit</span>(<span class="fu">gsub</span>(<span class="st">"[</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">]() ]"</span>, <span class="st">""</span>, bin), <span class="st">","</span>, <span class="at">fixed =</span> <span class="cn">TRUE</span>)[[<span class="dv">1</span>]])</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">identity_bin =</span> bin, <span class="at">identity_midpoint =</span> <span class="fu">mean</span>(bounds), <span class="at">number_of_pairs =</span> <span class="fu">length</span>(values), <span class="at">median_ts_tv =</span> <span class="cf">if</span> (<span class="fu">length</span>(values)) <span class="fu">median</span>(values) <span class="cf">else</span> <span class="cn">NA_real_</span>, <span class="at">lower_quartile =</span> <span class="cf">if</span> (<span class="fu">length</span>(values)) <span class="fu">unname</span>(<span class="fu">quantile</span>(values, <span class="fl">0.25</span>)) <span class="cf">else</span> <span class="cn">NA_real_</span>, <span class="at">upper_quartile =</span> <span class="cf">if</span> (<span class="fu">length</span>(values)) <span class="fu">unname</span>(<span class="fu">quantile</span>(values, <span class="fl">0.75</span>)) <span class="cf">else</span> <span class="cn">NA_real_</span>, <span class="at">included =</span> <span class="fu">length</span>(values) <span class="sc">&gt;=</span> minimum_pairs_per_identity_bin, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>}))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion
+Warning in FUN(X[[i]], ...): NAs introduced by coercion</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(ratio_summary_all, <span class="fu">file.path</span>(output_dir, <span class="st">"ts_tv_ratio_by_identity_bin.tsv"</span>), <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">na =</span> <span class="st">""</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ratio_summary <span class="ot">&lt;-</span> ratio_summary_all[ratio_summary_all<span class="sc">$</span>included, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>number_ts_tv_above_10 <span class="ot">&lt;-</span> <span class="fu">sum</span>(substitution_patterns<span class="sc">$</span>ts_tv_ratio <span class="sc">&gt;</span> <span class="dv">10</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>plot_ratio <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(substitution_patterns[<span class="sc">!</span><span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>ts_tv_ratio), , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="fu">aes</span>(identity_percentage, ts_tv_ratio)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.12</span>, <span class="at">colour =</span> <span class="st">"#0072B2"</span>, <span class="at">size =</span> <span class="fl">0.7</span>) <span class="sc">+</span> <span class="fu">geom_ribbon</span>(<span class="at">data =</span> ratio_summary, <span class="fu">aes</span>(<span class="at">x =</span> identity_midpoint, <span class="at">ymin =</span> lower_quartile, <span class="at">ymax =</span> upper_quartile), <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>, <span class="at">fill =</span> <span class="st">"#D55E00"</span>) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">data =</span> ratio_summary, <span class="fu">aes</span>(<span class="at">x =</span> identity_midpoint, <span class="at">y =</span> median_ts_tv), <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"#D55E00"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span> <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">100</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.01</span>))) <span class="sc">+</span> <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>))) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Pairwise nucleotide sequence identity (%)"</span>, <span class="at">y =</span> <span class="st">"Transition/transversion ratio (Ts/Tv)"</span>) <span class="sc">+</span> plot_theme <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">file.path</span>(figure_dir, <span class="st">"transition_transversion_ratio.png"</span>), plot_ratio, <span class="at">width =</span> plot_width_cm, <span class="at">height =</span> plot_height_cm, <span class="at">units =</span> <span class="st">"cm"</span>, <span class="at">dpi =</span> plot_dpi, <span class="at">bg =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 41 rows containing missing values or values outside the scale range
+(`geom_ribbon()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 41 rows containing missing values or values outside the scale range
+(`geom_line()`).</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>plot_ratio_zoom <span class="ot">&lt;-</span> plot_ratio <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">file.path</span>(figure_dir, <span class="st">"transition_transversion_ratio_zoom.png"</span>), plot_ratio_zoom, <span class="at">width =</span> plot_width_cm, <span class="at">height =</span> plot_height_cm, <span class="at">units =</span> <span class="st">"cm"</span>, <span class="at">dpi =</span> plot_dpi, <span class="at">bg =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 41 rows containing missing values or values outside the scale range
+(`geom_ribbon()`).
+Removed 41 rows containing missing values or values outside the scale range
+(`geom_line()`).</code></pre>
+</div>
+</div>
+<p>The original Ts/Tv scatterplot retains its full y-axis. A second display is limited to Ts/Tv values from 0 to 10 for visual inspection only. The complete results remain in the pairwise table. 2132 genome pairs have a Ts/Tv ratio above 10.</p>
+</section>
+<section id="observed-divergence-versus-k2p-distance" class="level1">
+<h1>Observed divergence versus K2P distance</h1>
+<p>K2P is a model-based distance and is undefined when either logarithmic argument is non-positive. Such pairs are excluded from the third plot and counted in the summary rather than being assigned an artificial value.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>plot_k2p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(substitution_patterns[<span class="sc">!</span><span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>k2p_distance), , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="fu">aes</span>(observed_divergence, k2p_distance)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.12</span>, <span class="at">colour =</span> <span class="st">"#009E73"</span>, <span class="at">size =</span> <span class="fl">0.7</span>) <span class="sc">+</span> <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span> <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.02</span>))) <span class="sc">+</span> <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>))) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Observed nucleotide divergence"</span>, <span class="at">y =</span> <span class="st">"K2P distance (substitutions/site)"</span>) <span class="sc">+</span> plot_theme <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">file.path</span>(figure_dir, <span class="st">"observed_divergence_vs_k2p.png"</span>), plot_k2p, <span class="at">width =</span> plot_width_cm, <span class="at">height =</span> plot_height_cm, <span class="at">units =</span> <span class="st">"cm"</span>, <span class="at">dpi =</span> plot_dpi, <span class="at">bg =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="pairwise-k2p-distance-heatmap" class="level1">
+<h1>Pairwise K2P-distance heatmap</h1>
+<p>The K2P heatmap uses the existing <code>substitution_patterns$k2p_distance</code> values. The genome order is reconstructed from the step-03 identity table with the same complete-linkage clustering used for the identity heatmap; no clustering based on K2P distances is performed.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>identity_heatmap_genomes <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(identity_table<span class="sc">$</span>genome_group_id_1, identity_table<span class="sc">$</span>genome_group_id_2))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(identity_heatmap_genomes) <span class="sc">!=</span> <span class="dv">520</span>L) <span class="fu">stop</span>(<span class="st">"The identity table must contain 520 genomes for the K2P heatmap order."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>identity_heatmap_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="cn">NA_real_</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="fu">length</span>(identity_heatmap_genomes),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="fu">length</span>(identity_heatmap_genomes),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(identity_heatmap_genomes, identity_heatmap_genomes)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>identity_rows <span class="ot">&lt;-</span> <span class="fu">match</span>(identity_table<span class="sc">$</span>genome_group_id_1, identity_heatmap_genomes)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>identity_columns <span class="ot">&lt;-</span> <span class="fu">match</span>(identity_table<span class="sc">$</span>genome_group_id_2, identity_heatmap_genomes)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>identity_heatmap_matrix[<span class="fu">cbind</span>(identity_rows, identity_columns)] <span class="ot">&lt;-</span> identity_table<span class="sc">$</span>identity_percentage</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>identity_heatmap_matrix[<span class="fu">cbind</span>(identity_columns, identity_rows)] <span class="ot">&lt;-</span> identity_table<span class="sc">$</span>identity_percentage</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(identity_heatmap_matrix) <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">anyNA</span>(identity_heatmap_matrix) <span class="sc">||</span> <span class="sc">!</span><span class="fu">isTRUE</span>(<span class="fu">all.equal</span>(identity_heatmap_matrix, <span class="fu">t</span>(identity_heatmap_matrix)))) {</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"The identity table did not produce a complete symmetric matrix for the K2P heatmap order."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>identity_heatmap_clustering <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">as.dist</span>(<span class="dv">100</span> <span class="sc">-</span> identity_heatmap_matrix), <span class="at">method =</span> <span class="st">"complete"</span>)</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>identity_heatmap_order <span class="ot">&lt;-</span> identity_heatmap_clustering<span class="sc">$</span>order</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>identity_heatmap_ordered_genomes <span class="ot">&lt;-</span> identity_heatmap_genomes[identity_heatmap_order]</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_genomes <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(substitution_patterns<span class="sc">$</span>genome_group_id_1, substitution_patterns<span class="sc">$</span>genome_group_id_2))</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(k2p_heatmap_genomes) <span class="sc">!=</span> <span class="dv">520</span>L <span class="sc">||</span> <span class="sc">!</span><span class="fu">setequal</span>(k2p_heatmap_genomes, identity_heatmap_genomes)) {</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"The K2P results do not contain the same 520 genomes as the identity table."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  <span class="cn">NA_real_</span>,</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="fu">length</span>(k2p_heatmap_genomes),</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> <span class="fu">length</span>(k2p_heatmap_genomes),</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(k2p_heatmap_genomes, k2p_heatmap_genomes)</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>k2p_rows <span class="ot">&lt;-</span> <span class="fu">match</span>(substitution_patterns<span class="sc">$</span>genome_group_id_1, k2p_heatmap_genomes)</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>k2p_columns <span class="ot">&lt;-</span> <span class="fu">match</span>(substitution_patterns<span class="sc">$</span>genome_group_id_2, k2p_heatmap_genomes)</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_matrix[<span class="fu">cbind</span>(k2p_rows, k2p_columns)] <span class="ot">&lt;-</span> substitution_patterns<span class="sc">$</span>k2p_distance</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_matrix[<span class="fu">cbind</span>(k2p_columns, k2p_rows)] <span class="ot">&lt;-</span> substitution_patterns<span class="sc">$</span>k2p_distance</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(k2p_heatmap_matrix) <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>number_undefined_k2p_heatmap <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>k2p_distance))</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">identical</span>(<span class="fu">dim</span>(k2p_heatmap_matrix), <span class="fu">c</span>(<span class="dv">520</span>L, <span class="dv">520</span>L))) <span class="fu">stop</span>(<span class="st">"The K2P heatmap matrix is not 520 x 520."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">isTRUE</span>(<span class="fu">all.equal</span>(k2p_heatmap_matrix, <span class="fu">t</span>(k2p_heatmap_matrix)))) <span class="fu">stop</span>(<span class="st">"The K2P heatmap matrix is not symmetric, including its NA positions."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">diag</span>(k2p_heatmap_matrix) <span class="sc">!=</span> <span class="dv">0</span>)) <span class="fu">stop</span>(<span class="st">"The K2P heatmap matrix diagonal is not zero."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_matrix <span class="ot">&lt;-</span> k2p_heatmap_matrix[identity_heatmap_ordered_genomes, identity_heatmap_ordered_genomes, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">identical</span>(<span class="fu">rownames</span>(k2p_heatmap_matrix), identity_heatmap_ordered_genomes) <span class="sc">||</span> <span class="sc">!</span><span class="fu">identical</span>(<span class="fu">colnames</span>(k2p_heatmap_matrix), identity_heatmap_ordered_genomes)) {</span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"The K2P heatmap order does not match the identity heatmap order."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_values <span class="ot">&lt;-</span> substitution_patterns<span class="sc">$</span>k2p_distance[<span class="sc">!</span><span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>k2p_distance)]</span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_limits <span class="ot">&lt;-</span> <span class="fu">range</span>(k2p_heatmap_values)</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_breaks <span class="ot">&lt;-</span> <span class="fu">pretty</span>(k2p_heatmap_limits, <span class="at">n =</span> <span class="dv">6</span>)</span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">row =</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(k2p_heatmap_matrix)),</span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">column =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(k2p_heatmap_matrix))</span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_data<span class="sc">$</span>k2p_distance <span class="ot">&lt;-</span> <span class="fu">c</span>(k2p_heatmap_matrix)</span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>k2p_heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(k2p_heatmap_data, <span class="fu">aes</span>(<span class="at">x =</span> column, <span class="at">y =</span> row, <span class="at">fill =</span> k2p_distance)) <span class="sc">+</span></span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>() <span class="sc">+</span></span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(</span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">colours =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">"#2166AC"</span>, <span class="st">"#67A9CF"</span>, <span class="st">"#D1E5F0"</span>, <span class="st">"#F7F7F7"</span>, <span class="st">"#A6DBA0"</span>, <span class="st">"#009E73"</span>)),</span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">limits =</span> k2p_heatmap_limits,</span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> k2p_heatmap_breaks,</span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"K2P distance</span><span class="sc">\n</span><span class="st">(substitutions/site)"</span>,</span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.value =</span> <span class="st">"#D9D9D9"</span></span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>(<span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_family =</span> <span class="st">"Arial"</span>) <span class="sc">+</span></span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.line =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.ticks =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>),</span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">colour =</span> <span class="cn">NA</span>),</span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">colour =</span> <span class="cn">NA</span>)</span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a>k2p_heatmap_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(figure_dir, <span class="st">"three_genes_pairwise_k2p_heatmap.png"</span>)</span>
+<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(k2p_heatmap_path, k2p_heatmap, <span class="at">width =</span> <span class="dv">20</span>, <span class="at">height =</span> <span class="dv">20</span>, <span class="at">units =</span> <span class="st">"cm"</span>, <span class="at">dpi =</span> <span class="dv">600</span>, <span class="at">bg =</span> <span class="st">"white"</span>)</span>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(k2p_heatmap_path) <span class="sc">||</span> <span class="fu">file.info</span>(k2p_heatmap_path)<span class="sc">$</span>size <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"The K2P heatmap was not created."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The number of undefined pairwise K2P distances is 0.</p>
+</section>
+<section id="pairwise-k2p-distance-histogram" class="level1">
+<h1>Pairwise K2P-distance histogram</h1>
+<p>The histogram uses each existing pairwise K2P distance at most once. Undefined, non-finite distances are excluded without replacement or imputation. Its colour mapping uses the same limits and palette as the K2P heatmap.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>k2p_histogram_pair_keys <span class="ot">&lt;-</span> <span class="fu">paste</span>(substitution_patterns<span class="sc">$</span>genome_group_id_1, substitution_patterns<span class="sc">$</span>genome_group_id_2, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\r</span><span class="st">"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(substitution_patterns) <span class="sc">!=</span> <span class="dv">134940</span>L <span class="sc">||</span> <span class="fu">anyDuplicated</span>(k2p_histogram_pair_keys) <span class="sc">||</span> <span class="fu">any</span>(substitution_patterns<span class="sc">$</span>genome_group_id_1 <span class="sc">==</span> substitution_patterns<span class="sc">$</span>genome_group_id_2)) {</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"The K2P histogram input does not contain exactly 134940 unique non-self pairwise comparisons."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>k2p_histogram_is_finite <span class="ot">&lt;-</span> <span class="fu">is.finite</span>(substitution_patterns<span class="sc">$</span>k2p_distance)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>k2p_histogram_values <span class="ot">&lt;-</span> substitution_patterns<span class="sc">$</span>k2p_distance[k2p_histogram_is_finite]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>k2p_histogram_number_comparisons <span class="ot">&lt;-</span> <span class="fu">nrow</span>(substitution_patterns)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>k2p_histogram_number_valid <span class="ot">&lt;-</span> <span class="fu">length</span>(k2p_histogram_values)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>k2p_histogram_number_undefined <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="sc">!</span>k2p_histogram_is_finite)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>k2p_histogram_minimum <span class="ot">&lt;-</span> <span class="fu">min</span>(k2p_histogram_values)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>k2p_histogram_maximum <span class="ot">&lt;-</span> <span class="fu">max</span>(k2p_histogram_values)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#k2p_histogram_binwidth &lt;- 0.005</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>k2p_histogram_binwidth <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>k2p_histogram_breaks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">ceiling</span>(k2p_histogram_maximum <span class="sc">/</span> k2p_histogram_binwidth) <span class="sc">*</span> k2p_histogram_binwidth, <span class="at">by =</span> k2p_histogram_binwidth)</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>k2p_histogram_counts <span class="ot">&lt;-</span> <span class="fu">hist</span>(k2p_histogram_values, <span class="at">breaks =</span> k2p_histogram_breaks, <span class="at">right =</span> <span class="cn">TRUE</span>, <span class="at">include.lowest =</span> <span class="cn">TRUE</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>counts</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>k2p_histogram_max_frequency <span class="ot">&lt;-</span> <span class="fu">max</span>(k2p_histogram_counts)</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">sum</span>(k2p_histogram_counts) <span class="sc">!=</span> k2p_histogram_number_valid) <span class="fu">stop</span>(<span class="st">"K2P histogram frequencies do not sum to the number of valid distances."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>k2p_histogram_x_breaks <span class="ot">&lt;-</span> <span class="fu">pretty</span>(<span class="fu">c</span>(<span class="dv">0</span>, k2p_histogram_maximum), <span class="at">n =</span> <span class="dv">6</span>)</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>k2p_histogram_y_breaks <span class="ot">&lt;-</span> <span class="fu">pretty</span>(<span class="fu">c</span>(<span class="dv">0</span>, k2p_histogram_max_frequency), <span class="at">n =</span> <span class="dv">6</span>)</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>k2p_histogram <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">k2p_distance =</span> k2p_histogram_values),</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> k2p_distance)</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">fill =</span> <span class="fu">after_stat</span>((xmin <span class="sc">+</span> xmax) <span class="sc">/</span> <span class="dv">2</span>)),</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">binwidth =</span> k2p_histogram_binwidth,</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">boundary =</span> <span class="dv">0</span>,</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">closed =</span> <span class="st">"right"</span>,</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"black"</span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">colours =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">"#2166AC"</span>, <span class="st">"#67A9CF"</span>, <span class="st">"#D1E5F0"</span>, <span class="st">"#F7F7F7"</span>, <span class="st">"#A6DBA0"</span>, <span class="st">"#009E73"</span>)),</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">limits =</span> k2p_heatmap_limits,</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">oob =</span> scales<span class="sc">::</span>squish</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, k2p_histogram_maximum), <span class="at">breaks =</span> k2p_histogram_x_breaks, <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, k2p_histogram_max_frequency), <span class="at">breaks =</span> k2p_histogram_y_breaks, <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>))) <span class="sc">+</span></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"K2P distance (substitutions/site)"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, k2p_histogram_maximum), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, k2p_histogram_max_frequency), <span class="at">expand =</span> <span class="cn">FALSE</span>, <span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_family =</span> <span class="st">"Arial"</span>) <span class="sc">+</span></span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.line =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"black"</span>),</span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_font_size),</span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> plot_font_size),</span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">6</span>, <span class="at">r =</span> <span class="dv">18</span>, <span class="at">b =</span> <span class="dv">6</span>, <span class="at">l =</span> <span class="dv">6</span>, <span class="at">unit =</span> <span class="st">"pt"</span>)</span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a>k2p_histogram_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(figure_dir, <span class="st">"three_genes_pairwise_k2p_histogram_colored.png"</span>)</span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(k2p_histogram_path, k2p_histogram, <span class="at">width =</span> plot_width_cm, <span class="at">height =</span> plot_height_cm, <span class="at">units =</span> <span class="st">"cm"</span>, <span class="at">dpi =</span> plot_dpi, <span class="at">bg =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 1 row containing missing values or values outside the scale range
+(`geom_bar()`).</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(k2p_histogram_path) <span class="sc">||</span> <span class="fu">file.info</span>(k2p_histogram_path)<span class="sc">$</span>size <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"The coloured K2P histogram was not created."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>k2p_histogram_grey <span class="ot">&lt;-</span> k2p_histogram</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>k2p_histogram_grey<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>mapping<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>k2p_histogram_grey<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">"grey70"</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>k2p_histogram_grey_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(figure_dir, <span class="st">"three_genes_pairwise_k2p_histogram_grey.png"</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(k2p_histogram_grey_path, k2p_histogram_grey, <span class="at">width =</span> plot_width_cm, <span class="at">height =</span> plot_height_cm, <span class="at">units =</span> <span class="st">"cm"</span>, <span class="at">dpi =</span> plot_dpi, <span class="at">bg =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 1 row containing missing values or values outside the scale range
+(`geom_bar()`).</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(k2p_histogram_grey_path) <span class="sc">||</span> <span class="fu">file.info</span>(k2p_histogram_grey_path)<span class="sc">$</span>size <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"The grey K2P histogram was not created."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The K2P histogram contains 134940 pairwise comparisons, of which 134940 have finite distances and 0 are undefined. The valid distances range from 0 to 1.39828 substitutions/site. The histogram bin width is 0.01 substitutions/site, and the bin frequencies sum to 134940.</p>
+<p>The substitution-pattern graphics and the other descriptive graphics are displayed below.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot_substitutions</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04_substitution_patterns_files/figure-html/display-substitution-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>plot_substitutions_zoom</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 242224 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04_substitution_patterns_files/figure-html/display-substitution-plot-zoom-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>plot_ratio</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 41 rows containing missing values or values outside the scale range
+(`geom_ribbon()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 41 rows containing missing values or values outside the scale range
+(`geom_line()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04_substitution_patterns_files/figure-html/display-ratio-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>plot_ratio_zoom</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 41 rows containing missing values or values outside the scale range
+(`geom_ribbon()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 41 rows containing missing values or values outside the scale range
+(`geom_line()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04_substitution_patterns_files/figure-html/display-ratio-plot-zoom-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>plot_k2p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04_substitution_patterns_files/figure-html/display-k2p-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="summary-statistics" class="level1">
+<h1>Summary statistics</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>valid_ratio <span class="ot">&lt;-</span> substitution_patterns<span class="sc">$</span>ts_tv_ratio[<span class="sc">!</span><span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>ts_tv_ratio)]</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>valid_k2p <span class="ot">&lt;-</span> substitution_patterns<span class="sc">$</span>k2p_distance[<span class="sc">!</span><span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>k2p_distance)]</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>summary_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">number_of_genomes =</span> <span class="fu">length</span>(genome_ids), <span class="at">number_of_pairwise_comparisons =</span> <span class="fu">nrow</span>(substitution_patterns),</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">number_of_valid_pairwise_comparisons =</span> <span class="fu">sum</span>(substitution_patterns<span class="sc">$</span>compared_positions <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">number_of_undefined_ts_tv_ratios =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>ts_tv_ratio)),</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">number_of_ts_tv_ratios_above_10 =</span> number_ts_tv_above_10,</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">number_of_undefined_k2p_distances =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(substitution_patterns<span class="sc">$</span>k2p_distance)),</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">minimum_transition_frequency =</span> <span class="fu">min</span>(substitution_patterns<span class="sc">$</span>transition_frequency, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">median_transition_frequency =</span> <span class="fu">median</span>(substitution_patterns<span class="sc">$</span>transition_frequency, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">maximum_transition_frequency =</span> <span class="fu">max</span>(substitution_patterns<span class="sc">$</span>transition_frequency, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">minimum_transversion_frequency =</span> <span class="fu">min</span>(substitution_patterns<span class="sc">$</span>transversion_frequency, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">median_transversion_frequency =</span> <span class="fu">median</span>(substitution_patterns<span class="sc">$</span>transversion_frequency, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">maximum_transversion_frequency =</span> <span class="fu">max</span>(substitution_patterns<span class="sc">$</span>transversion_frequency, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">minimum_ts_tv_ratio =</span> <span class="cf">if</span> (<span class="fu">length</span>(valid_ratio)) <span class="fu">min</span>(valid_ratio) <span class="cf">else</span> <span class="cn">NA_real_</span>, <span class="at">median_ts_tv_ratio =</span> <span class="cf">if</span> (<span class="fu">length</span>(valid_ratio)) <span class="fu">median</span>(valid_ratio) <span class="cf">else</span> <span class="cn">NA_real_</span>, <span class="at">maximum_ts_tv_ratio =</span> <span class="cf">if</span> (<span class="fu">length</span>(valid_ratio)) <span class="fu">max</span>(valid_ratio) <span class="cf">else</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">minimum_k2p_distance =</span> <span class="cf">if</span> (<span class="fu">length</span>(valid_k2p)) <span class="fu">min</span>(valid_k2p) <span class="cf">else</span> <span class="cn">NA_real_</span>, <span class="at">median_k2p_distance =</span> <span class="cf">if</span> (<span class="fu">length</span>(valid_k2p)) <span class="fu">median</span>(valid_k2p) <span class="cf">else</span> <span class="cn">NA_real_</span>, <span class="at">maximum_k2p_distance =</span> <span class="cf">if</span> (<span class="fu">length</span>(valid_k2p)) <span class="fu">max</span>(valid_k2p) <span class="cf">else</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(summary_table, <span class="fu">file.path</span>(output_dir, <span class="st">"substitution_summary.tsv"</span>), <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">na =</span> <span class="st">""</span>)</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(summary_table, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">digits =</span> <span class="dv">6</span>, <span class="at">table.attr =</span> <span class="st">'class="table table-striped table-sm"'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-sm caption-top small">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">number_of_genomes</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">number_of_pairwise_comparisons</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">number_of_valid_pairwise_comparisons</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">number_of_undefined_ts_tv_ratios</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">number_of_ts_tv_ratios_above_10</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">number_of_undefined_k2p_distances</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">minimum_transition_frequency</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median_transition_frequency</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">maximum_transition_frequency</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">minimum_transversion_frequency</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median_transversion_frequency</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">maximum_transversion_frequency</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">minimum_ts_tv_ratio</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median_ts_tv_ratio</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">maximum_ts_tv_ratio</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">minimum_k2p_distance</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">median_k2p_distance</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">maximum_k2p_distance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">520</td>
+<td style="text-align: right;">134940</td>
+<td style="text-align: right;">134940</td>
+<td style="text-align: right;">2270</td>
+<td style="text-align: right;">2132</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.172686</td>
+<td style="text-align: right;">0.259586</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.194624</td>
+<td style="text-align: right;">0.377912</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.837788</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.541741</td>
+<td style="text-align: right;">1.398283</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="discussion" class="level1">
+<h1>Discussion</h1>
+<p>Because observed divergence equals the sum of transition and transversion frequencies, its increase as identity decreases is not an independent biological finding. The relative allocation between transitions and transversions is more informative for this descriptive purpose. Even so, a changing Ts/Tv ratio does not by itself demonstrate substitution saturation, and pairwise observed differences should not be equated with the historical number of substitutions. K2P is a model-based correction under simplifying assumptions and is therefore interpreted here only as a comparison with observed divergence.</p>
+</section>
+<section id="validation" class="level1">
+<h1>Validation</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>expected_outputs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"pairwise_substitution_patterns.tsv"</span>, <span class="st">"substitution_summary.tsv"</span>, <span class="st">"ts_tv_ratio_by_identity_bin.tsv"</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>expected_figures <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"transitions_transversions.png"</span>, <span class="st">"transitions_transversions_zoom.png"</span>, <span class="st">"transition_transversion_ratio.png"</span>, <span class="st">"transition_transversion_ratio_zoom.png"</span>, <span class="st">"observed_divergence_vs_k2p.png"</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">all</span>(<span class="fu">file.exists</span>(<span class="fu">file.path</span>(output_dir, expected_outputs))) <span class="sc">||</span> <span class="sc">!</span><span class="fu">all</span>(<span class="fu">file.exists</span>(<span class="fu">file.path</span>(figure_dir, expected_figures)))) <span class="fu">stop</span>(<span class="st">"One or more substitution-pattern output files are missing."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>png_files <span class="ot">&lt;-</span> <span class="fu">file.path</span>(figure_dir, expected_figures)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">file.info</span>(png_files)<span class="sc">$</span>size <span class="sc">&lt;=</span> <span class="dv">0</span>) <span class="sc">||</span> <span class="fu">length</span>(<span class="fu">list.files</span>(figure_dir, <span class="at">pattern =</span> <span class="st">"</span><span class="sc">\\</span><span class="st">.pdf$"</span>, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)) <span class="sc">&gt;</span> <span class="dv">0</span>L) <span class="fu">stop</span>(<span class="st">"Figure export validation failed."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="output-files" class="level1">
+<h1>Output files</h1>
+<p>The pairwise substitution table, summary, and identity-bin audit are written to <code>results/substitution_patterns/</code>. The original Ts/Tv plot, its 0–10 zoomed display, and the other two individual PNG figures are written to <code>results/substitution_patterns/figures/</code>. The report does not modify the input alignment, the step-03 identity table, or any earlier Quarto document.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
